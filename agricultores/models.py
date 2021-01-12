@@ -4,7 +4,32 @@ from django.contrib.auth.models import (
 )
 from phonenumber_field.modelfields import PhoneNumberField
 
+
 # Create your models here.
+
+class Department(models.Model):
+    name = models.CharField(max_length=25)
+
+    def __str__(self):
+        return self.name
+
+
+class Region(models.Model):
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    name = models.CharField(max_length=25)
+
+    def __str__(self):
+        return self.name
+
+
+class District(models.Model):
+    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    name = models.CharField(max_length=25)
+
+    def __str__(self):
+        return self.name
+
 
 class UserManager(BaseUserManager):
     def create_user(self, phone_number, password=None):
@@ -42,6 +67,9 @@ class User(AbstractBaseUser):
     number_of_credits = models.IntegerField(default=0)
     RUC = models.CharField(max_length=11, null=True, blank=True)
     DNI = models.CharField(max_length=8, null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    district = models.ForeignKey(District, on_delete=models.CASCADE, null=True, blank=True)
     is_advertiser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -70,20 +98,36 @@ class User(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
-class Advertisement(models.Model):
-    pass
 
-
-class Supplies(models.Model):
+class Supply(models.Model):
     name = models.CharField(max_length=50)
 
-class Publish(models.Model):
-    UNIT = (
-        ('Kg', 'Kilogramos'),
-        ('g', 'Gramos'),
-    )
+    def __str__(self):
+        return self.name
+
+
+class Advertisement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    supplies = models.ForeignKey(Supplies, on_delete=models.CASCADE)
+    supply = models.ForeignKey(Supply, on_delete=models.CASCADE)
+    reach = models.IntegerField()
+    harvest_date = models.DateTimeField()
+    sowing_date = models.DateTimeField()
+
+
+class AddressedTo(models.Model):
+    advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE)
+    district = models.ForeignKey(District, on_delete=models.CASCADE)
+
+
+UNIT = [
+    ('Kg', 'Kilogramos'),
+    ('g', 'Gramos'),
+]
+
+
+class Publish(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    supplies = models.ForeignKey(Supply, on_delete=models.CASCADE)
     picture_URL = models.URLField(null=True, blank=True)
     unit = models.CharField(max_length=2, choices=UNIT)
     quantity = models.IntegerField()
@@ -93,12 +137,8 @@ class Publish(models.Model):
 
 
 class Order(models.Model):
-    UNIT = (
-        ('Kg', 'Kilogramos'),
-        ('g', 'Gramos'),
-    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    supplies = models.ForeignKey(Supplies, on_delete=models.CASCADE)
+    supplies = models.ForeignKey(Supply, on_delete=models.CASCADE)
     unit = models.CharField(max_length=2, choices=UNIT)
     number = models.IntegerField()
     unit_price = models.FloatField()

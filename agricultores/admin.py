@@ -5,7 +5,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
-from agricultores.models import User
+from agricultores.models import *
 
 
 class UserCreationForm(forms.ModelForm):
@@ -52,6 +52,9 @@ class UserChangeForm(forms.ModelForm):
                   'number_of_credits',
                   'RUC',
                   'DNI',
+                  'latitude',
+                  'longitude',
+                  'district',
                   'is_advertiser',
                   'password',
                   'is_active',
@@ -83,10 +86,13 @@ class UserAdmin(BaseUserAdmin):
                                       'last_name',
                                       'profile_picture_URL',
                                       'number_of_credits',
+                                      'district',
                                       'RUC',
                                       'DNI',
                                       )
                            }
+         ),
+        ('Coordenadas', {'fields': ('latitude','longitude')}
          ),
         ('Permissions', {'fields': ('is_admin','is_advertiser',)}),
     )
@@ -108,3 +114,13 @@ admin.site.register(User, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
+
+admin.site.register(Supply)
+admin.site.register(Publish)
+admin.site.register(Order)
+admin.site.register(Advertisement)
+admin.site.register(AddressedTo)
+
+admin.site.register(Department)
+admin.site.register(Region)
+admin.site.register(District)
