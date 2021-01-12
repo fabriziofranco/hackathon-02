@@ -15,7 +15,7 @@ class Department(models.Model):
 
 
 class Region(models.Model):
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, related_name='regions', on_delete=models.CASCADE)
     name = models.CharField(max_length=25)
 
     def __str__(self):
@@ -23,8 +23,8 @@ class Region(models.Model):
 
 
 class District(models.Model):
-    region = models.ForeignKey(Region, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    region = models.ForeignKey(Region, related_name='districts', on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, related_name='districts', on_delete=models.CASCADE)
     name = models.CharField(max_length=25)
 
     def __str__(self):
@@ -69,7 +69,7 @@ class User(AbstractBaseUser):
     DNI = models.CharField(max_length=8, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    district = models.ForeignKey(District, on_delete=models.CASCADE, null=True, blank=True)
+    district = models.ForeignKey(District, related_name='users', on_delete=models.CASCADE, null=True, blank=True)
     is_advertiser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)

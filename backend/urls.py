@@ -21,7 +21,9 @@ from agricultores import views
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet, basename='users')
-router.register(r'department', views.DepartmentViewSet, basename='department')
+router.register(r'departments', views.DepartmentViewSet, basename='departments')
+router.register(r'regions', views.RegionViewSet, basename='regions')
+router.register(r'districts', views.DistrictViewSet, basename='districts')
 
 urlpatterns = [
     path('', include(router.urls)),
