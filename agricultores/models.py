@@ -107,16 +107,16 @@ class Supply(models.Model):
 
 
 class Advertisement(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    supply = models.ForeignKey(Supply, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='advertisements', null=True, blank=True)
+    supply = models.ForeignKey(Supply, on_delete=models.CASCADE, related_name='advertisements', null=True, blank=True)
     reach = models.IntegerField()
     harvest_date = models.DateTimeField()
     sowing_date = models.DateTimeField()
 
 
 class AddressedTo(models.Model):
-    advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE)
-    district = models.ForeignKey(District, on_delete=models.CASCADE)
+    advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE, related_name='addresed_to', null=True, blank=True)
+    district = models.ForeignKey(District, on_delete=models.CASCADE, related_name='addresed_to', null=True, blank=True)
 
 
 UNIT = [
@@ -126,8 +126,8 @@ UNIT = [
 
 
 class Publish(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    supplies = models.ForeignKey(Supply, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts', null=True, blank=True)
+    supplies = models.ForeignKey(Supply, on_delete=models.CASCADE, related_name='posts', null=True, blank=True)
     picture_URL = models.URLField(null=True, blank=True)
     unit = models.CharField(max_length=2, choices=UNIT)
     quantity = models.IntegerField()
@@ -137,8 +137,8 @@ class Publish(models.Model):
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    supplies = models.ForeignKey(Supply, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', null=True, blank=True)
+    supplies = models.ForeignKey(Supply, on_delete=models.CASCADE, related_name='orders', null=True, blank=True)
     unit = models.CharField(max_length=2, choices=UNIT)
     number = models.IntegerField()
     unit_price = models.FloatField()

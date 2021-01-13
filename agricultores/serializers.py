@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 
 from agricultores.models import Department, District, Region, Supply, Advertisement, AddressedTo, Publish, Order
 
-
 class UserSerializer(serializers.ModelSerializer):
     district = serializers.StringRelatedField()
 
@@ -27,15 +26,20 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class DistrictSerializer(serializers.ModelSerializer):
+    department = serializers.CharField(source='department.name')
+    region = serializers.CharField(source='region.name')
+    
     class Meta:
         model = District
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'department', 'region']
 
 
 class RegionSerializer(serializers.ModelSerializer):
+    department = serializers.CharField(source='department.name')
+    
     class Meta:
         model = Region
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'department']
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -51,6 +55,9 @@ class SuppliesSerializer(serializers.ModelSerializer):
 
 
 class AdvertisementSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.phone_number')
+    supply = serializers.CharField(source='supply.name')
+    
     class Meta:
         model = Advertisement
         fields = '__all__'
