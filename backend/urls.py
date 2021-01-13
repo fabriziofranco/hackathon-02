@@ -25,11 +25,11 @@ router.register(r'departments', views.DepartmentViewSet, basename='departments')
 router.register(r'regions', views.RegionViewSet, basename='regions')
 router.register(r'districts', views.DistrictViewSet, basename='districts')
 
-router.register(r'supplys', views.SupplyViewSet, basename='supplys')
+router.register(r'supplies', views.SupplyViewSet, basename='supplies')
 router.register(r'advertisements', views.AdvertisementViewSet, basename='advertisements')
 router.register(r'addressedTos', views.AddressedToViewSet, basename='addressedTos')
-router.register(r'publish', views.PublishViewSet, basename='publish')
-router.register(r'order', views.OrderViewSet, basename='order')
+router.register(r'crops', views.PublishViewSet, basename='crops')
+router.register(r'orders', views.OrderViewSet, basename='orders')
 
 
 urlpatterns = [

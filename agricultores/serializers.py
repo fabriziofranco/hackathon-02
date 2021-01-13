@@ -5,8 +5,6 @@ from django.contrib.auth import get_user_model
 from agricultores.models import Department, District, Region, Supply, Advertisement, AddressedTo, Publish, Order
 
 class UserSerializer(serializers.ModelSerializer):
-    district = serializers.StringRelatedField()
-
     class Meta:
         model = get_user_model()
         fields = [
@@ -26,17 +24,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class DistrictSerializer(serializers.ModelSerializer):
-    department = serializers.CharField(source='department.name')
-    region = serializers.CharField(source='region.name')
-    
     class Meta:
         model = District
         fields = ['id', 'name', 'department', 'region']
 
 
 class RegionSerializer(serializers.ModelSerializer):
-    department = serializers.CharField(source='department.name')
-    
     class Meta:
         model = Region
         fields = ['id', 'name', 'department']
@@ -55,9 +48,6 @@ class SuppliesSerializer(serializers.ModelSerializer):
 
 
 class AdvertisementSerializer(serializers.ModelSerializer):
-    user = serializers.CharField(source='user.phone_number')
-    supply = serializers.CharField(source='supply.name')
-    
     class Meta:
         model = Advertisement
         fields = '__all__'
@@ -79,27 +69,3 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
-
-
-# class DistrictSerializer(serializers.ModelSerializer):
-#     users = UserSerializer(many=True, read_only=True)
-#
-#     class Meta:
-#         model = District
-#         fields = ['id', 'name', 'users']
-#
-#
-# class RegionSerializer(serializers.ModelSerializer):
-#     districts = DistrictSerializer(many=True, read_only=True)
-#
-#     class Meta:
-#         model = Region
-#         fields = ['id', 'name', 'districts']
-#
-#
-# class DepartmentSerializer(serializers.ModelSerializer):
-#     regions = RegionSerializer(many=True, read_only=True)
-#
-#     class Meta:
-#         model = Department
-#         fields = ['id', 'name', 'regions']
