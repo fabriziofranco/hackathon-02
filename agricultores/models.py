@@ -15,7 +15,7 @@ class Department(models.Model):
 
 
 class Region(models.Model):
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, related_name='regions', on_delete=models.CASCADE)
     name = models.CharField(max_length=25)
 
     def __str__(self):
@@ -23,8 +23,8 @@ class Region(models.Model):
 
 
 class District(models.Model):
-    region = models.ForeignKey(Region, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    region = models.ForeignKey(Region, related_name='districts', on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, related_name='districts', on_delete=models.CASCADE)
     name = models.CharField(max_length=25)
 
     def __str__(self):
@@ -69,7 +69,7 @@ class User(AbstractBaseUser):
     DNI = models.CharField(max_length=8, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    district = models.ForeignKey(District, on_delete=models.CASCADE, null=True)
+    district = models.ForeignKey(District, related_name='users', on_delete=models.CASCADE, null=True, blank=True)
     is_advertiser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -107,16 +107,16 @@ class Supply(models.Model):
 
 
 class Advertisement(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='advertisements', null=True, blank=True)
-    supply = models.ForeignKey(Supply, on_delete=models.CASCADE, related_name='advertisements', null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    supply = models.ForeignKey(Supply, on_delete=models.CASCADE)
     reach = models.IntegerField()
     harvest_date = models.DateTimeField()
     sowing_date = models.DateTimeField()
 
 
 class AddressedTo(models.Model):
-    advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE, related_name='addresed_to', null=True, blank=True)
-    district = models.ForeignKey(District, on_delete=models.CASCADE, related_name='addresed_to', null=True, blank=True)
+    advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE)
+    district = models.ForeignKey(District, on_delete=models.CASCADE)
 
 
 UNIT = [
@@ -126,8 +126,8 @@ UNIT = [
 
 
 class Publish(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    supplies = models.ForeignKey(Supply, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    supplies = models.ForeignKey(Supply, on_delete=models.CASCADE)
     picture_URL = models.URLField(null=True, blank=True)
     unit = models.CharField(max_length=2, choices=UNIT)
     quantity = models.IntegerField()
@@ -137,8 +137,8 @@ class Publish(models.Model):
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    supplies = models.ForeignKey(Supply, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    supplies = models.ForeignKey(Supply, on_delete=models.CASCADE)
     unit = models.CharField(max_length=2, choices=UNIT)
     number = models.IntegerField()
     unit_price = models.FloatField()

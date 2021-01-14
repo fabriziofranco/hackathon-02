@@ -16,7 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from rest_framework_simplejwt import views as jwt_views
 
 from agricultores import views
 
@@ -26,18 +25,15 @@ router.register(r'departments', views.DepartmentViewSet, basename='departments')
 router.register(r'regions', views.RegionViewSet, basename='regions')
 router.register(r'districts', views.DistrictViewSet, basename='districts')
 
-router.register(r'supplies', views.SupplyViewSet, basename='supplies')
+router.register(r'supplys', views.SupplyViewSet, basename='supplys')
 router.register(r'advertisements', views.AdvertisementViewSet, basename='advertisements')
 router.register(r'addressedTos', views.AddressedToViewSet, basename='addressedTos')
-router.register(r'crops', views.PublishViewSet, basename='crops')
-router.register(r'orders', views.OrderViewSet, basename='orders')
+router.register(r'publish', views.PublishViewSet, basename='publish')
+router.register(r'order', views.OrderViewSet, basename='order')
 
 
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
-    path('hello/', views.HelloView.as_view(), name='hello'),
 ]
