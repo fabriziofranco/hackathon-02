@@ -60,6 +60,8 @@ class User(AbstractBaseUser):
         verbose_name='email address',
         max_length=255,
         unique=True,
+        blank=True,
+        null=True,
     )
     first_name = models.CharField(max_length=30, null=True, blank=True)
     last_name = models.CharField(max_length=30, null=True, blank=True)
