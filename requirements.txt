@@ -7,4 +7,3 @@ Markdown==3.3.3
 phonenumbers==8.12.15
 pytz==2020.5
 sqlparse==0.4.1
-djangorestframework_simplejwt==4.6.0
