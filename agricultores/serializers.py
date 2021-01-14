@@ -4,10 +4,7 @@ from django.contrib.auth import get_user_model
 
 from agricultores.models import Department, District, Region, Supply, Advertisement, AddressedTo, Publish, Order
 
-
 class UserSerializer(serializers.ModelSerializer):
-    district = serializers.StringRelatedField()
-
     class Meta:
         model = get_user_model()
         fields = [
@@ -29,13 +26,13 @@ class UserSerializer(serializers.ModelSerializer):
 class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
         model = District
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'department', 'region']
 
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'department']
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -72,27 +69,3 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
-
-
-# class DistrictSerializer(serializers.ModelSerializer):
-#     users = UserSerializer(many=True, read_only=True)
-#
-#     class Meta:
-#         model = District
-#         fields = ['id', 'name', 'users']
-#
-#
-# class RegionSerializer(serializers.ModelSerializer):
-#     districts = DistrictSerializer(many=True, read_only=True)
-#
-#     class Meta:
-#         model = Region
-#         fields = ['id', 'name', 'districts']
-#
-#
-# class DepartmentSerializer(serializers.ModelSerializer):
-#     regions = RegionSerializer(many=True, read_only=True)
-#
-#     class Meta:
-#         model = Department
-#         fields = ['id', 'name', 'regions']
