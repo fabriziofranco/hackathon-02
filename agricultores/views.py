@@ -1,7 +1,16 @@
+import twilio
+from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework import permissions
 from django.contrib.auth import get_user_model
+from rest_framework.decorators import api_view, schema
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+import environ
+from twilio import base
+from twilio.rest import Client
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -51,6 +60,7 @@ class DistrictViewSet(viewsets.ModelViewSet):
     pagination_class = None
     permission_classes = [permissions.IsAuthenticated]
 
+
 class SupplyViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -59,6 +69,7 @@ class SupplyViewSet(viewsets.ModelViewSet):
     serializer_class = SuppliesSerializer
     pagination_class = None
     permission_classes = [permissions.IsAuthenticated]
+
 
 class AdvertisementViewSet(viewsets.ModelViewSet):
     """
@@ -69,6 +80,7 @@ class AdvertisementViewSet(viewsets.ModelViewSet):
     pagination_class = None
     permission_classes = [permissions.IsAuthenticated]
 
+
 class AddressedToViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -78,6 +90,7 @@ class AddressedToViewSet(viewsets.ModelViewSet):
     pagination_class = None
     permission_classes = [permissions.IsAuthenticated]
 
+
 class PublishViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -86,6 +99,7 @@ class PublishViewSet(viewsets.ModelViewSet):
     serializer_class = PublishSerializer
     pagination_class = None
     permission_classes = [permissions.IsAuthenticated]
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     """
@@ -97,9 +111,44 @@ class OrderViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+
+class PhoneVerification(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    client = Client(environ.Env().str('TWILIO_ACCOUNT_SID'), environ.Env().str('TWILIO_AUTH_TOKEN'))
+
+    def send_verification_token(self, phone_number, channel):
+        verification = self.client.verify \
+            .services(environ.Env().str('TWILIO_SERVICE')) \
+            .verifications \
+            .create(to=phone_number, channel=channel)
+        return verification
+
+    def check_verification_token(self, phone_number, code):
+        verification_check = self.client.verify \
+            .services(environ.Env().str('TWILIO_SERVICE')) \
+            .verification_checks \
+            .create(to=phone_number, code=code)
+        return verification_check
+
+    def get(self, request):
+        try:
+            response = self.send_verification_token(request.user.phone_number.as_e164, 'sms')
+            return Response(response.status)
+        except twilio.base.exceptions.TwilioRestException as e:
+            return HttpResponse(e, status=400)
+
+    def post(self, request):
+        code = request.data.get('code')
+        try:
+            response = self.check_verification_token(request.user.phone_number.as_e164, code)
+            return Response(response.status)
+        except twilio.base.exceptions.TwilioRestException as e:
+            return HttpResponse(e, status=400)
+
 class HelloView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         content = {'message': 'Hello, World!'}
         return Response(content)
+
