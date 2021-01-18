@@ -12,3 +12,4 @@ django-environ==0.4.5
 djangorestframework_simplejwt==4.4.0
 django-environ==0.4.5
 gunicorn==20.0.4
+whitenoise~=5.2.0
