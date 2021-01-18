@@ -140,7 +140,7 @@ class PhoneVerification(APIView):
             return HttpResponse(e, status=400)
 
 class HelloView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         content = {'message': 'Hello, World!'}
