@@ -12,10 +12,6 @@ import environ
 from twilio import base
 from twilio.rest import Client
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-
 from agricultores.models import Department, Region, District, Supply, Advertisement, AddressedTo, Publish, Order
 from agricultores.serializers import UserSerializer, DepartmentSerializer, RegionSerializer, DistrictSerializer, \
     SuppliesSerializer, AdvertisementSerializer, AdressedToSerializer, PublishSerializer, OrderSerializer
@@ -110,8 +106,6 @@ class OrderViewSet(viewsets.ModelViewSet):
     pagination_class = None
     permission_classes = [permissions.IsAuthenticated]
 
-
-
 class PhoneVerification(APIView):
     permission_classes = [permissions.IsAuthenticated]
     client = Client(environ.Env().str('TWILIO_ACCOUNT_SID'), environ.Env().str('TWILIO_AUTH_TOKEN'))
@@ -151,4 +145,3 @@ class HelloView(APIView):
     def get(self, request):
         content = {'message': 'Hello, World!'}
         return Response(content)
-
