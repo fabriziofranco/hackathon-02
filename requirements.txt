@@ -10,3 +10,4 @@ sqlparse==0.4.1
 twilio~=6.50.1
 django-environ==0.4.5
 djangorestframework_simplejwt==4.6.0
+django-environ==0.4.5
