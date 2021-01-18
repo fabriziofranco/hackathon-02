@@ -23,7 +23,10 @@ class UserSerializer(serializers.ModelSerializer):
             'district',
             'latitude',
             'longitude',
-            'is_advertiser']
+            'is_advertiser',
+            'role',
+            'is_verified'
+        ]
 
 
 class DistrictSerializer(serializers.ModelSerializer):

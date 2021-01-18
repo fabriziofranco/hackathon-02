@@ -1,0 +1,1562 @@
+[
+    {
+        "model": "agricultores.region",
+        "pk": 1,
+        "fields": {
+            "name": "Chachapoyas",
+            "department": 1
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 2,
+        "fields": {
+            "name": "Bagua",
+            "department": 1
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 3,
+        "fields": {
+            "name": "Bongara",
+            "department": 1
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 4,
+        "fields": {
+            "name": "Condorcanqui",
+            "department": 1
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 5,
+        "fields": {
+            "name": "Luya",
+            "department": 1
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 6,
+        "fields": {
+            "name": "Rodriguez de Mendoza",
+            "department": 1
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 7,
+        "fields": {
+            "name": "Utcubamba",
+            "department": 1
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 8,
+        "fields": {
+            "name": "Huaraz",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 9,
+        "fields": {
+            "name": "Aija",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 10,
+        "fields": {
+            "name": "Antonio Raymondi",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 11,
+        "fields": {
+            "name": "Asuncion",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 12,
+        "fields": {
+            "name": "Bolognesi",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 13,
+        "fields": {
+            "name": "Carhuaz",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 14,
+        "fields": {
+            "name": "Carlos Fermin Fitzca",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 15,
+        "fields": {
+            "name": "Casma",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 16,
+        "fields": {
+            "name": "Corongo",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 17,
+        "fields": {
+            "name": "Huari",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 18,
+        "fields": {
+            "name": "Huarmey",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 19,
+        "fields": {
+            "name": "Huaylas",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 20,
+        "fields": {
+            "name": "Mariscal Luzuriaga",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 21,
+        "fields": {
+            "name": "Ocros",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 22,
+        "fields": {
+            "name": "Pallasca",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 23,
+        "fields": {
+            "name": "Pomabamba",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 24,
+        "fields": {
+            "name": "Recuay",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 25,
+        "fields": {
+            "name": "Santa",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 26,
+        "fields": {
+            "name": "Sihuas",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 27,
+        "fields": {
+            "name": "Yungay",
+            "department": 2
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 28,
+        "fields": {
+            "name": "Abancay",
+            "department": 3
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 29,
+        "fields": {
+            "name": "Andahuaylas",
+            "department": 3
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 30,
+        "fields": {
+            "name": "Antabamba",
+            "department": 3
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 31,
+        "fields": {
+            "name": "Aymaraes",
+            "department": 3
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 32,
+        "fields": {
+            "name": "Cotabambas",
+            "department": 3
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 33,
+        "fields": {
+            "name": "Chincheros",
+            "department": 3
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 34,
+        "fields": {
+            "name": "Grau",
+            "department": 3
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 35,
+        "fields": {
+            "name": "Arequipa",
+            "department": 4
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 36,
+        "fields": {
+            "name": "Camana",
+            "department": 4
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 37,
+        "fields": {
+            "name": "Caraveli",
+            "department": 4
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 38,
+        "fields": {
+            "name": "Castilla",
+            "department": 4
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 39,
+        "fields": {
+            "name": "Caylloma",
+            "department": 4
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 40,
+        "fields": {
+            "name": "Condesuyos",
+            "department": 4
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 41,
+        "fields": {
+            "name": "Islay",
+            "department": 4
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 42,
+        "fields": {
+            "name": "La Union",
+            "department": 4
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 43,
+        "fields": {
+            "name": "Huamanga",
+            "department": 5
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 44,
+        "fields": {
+            "name": "Cangallo",
+            "department": 5
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 45,
+        "fields": {
+            "name": "Huanca Sancos",
+            "department": 5
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 46,
+        "fields": {
+            "name": "Huanta",
+            "department": 5
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 47,
+        "fields": {
+            "name": "La Mar",
+            "department": 5
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 48,
+        "fields": {
+            "name": "Lucanas",
+            "department": 5
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 49,
+        "fields": {
+            "name": "Parinacochas",
+            "department": 5
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 50,
+        "fields": {
+            "name": "Paucar del Sara Sara",
+            "department": 5
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 51,
+        "fields": {
+            "name": "Sucre",
+            "department": 5
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 52,
+        "fields": {
+            "name": "Victor Fajardo",
+            "department": 5
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 53,
+        "fields": {
+            "name": "Vilcas Huaman",
+            "department": 5
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 54,
+        "fields": {
+            "name": "Cajamarca",
+            "department": 6
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 55,
+        "fields": {
+            "name": "Cajabamba",
+            "department": 6
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 56,
+        "fields": {
+            "name": "Celendin",
+            "department": 6
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 57,
+        "fields": {
+            "name": "Chota",
+            "department": 6
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 58,
+        "fields": {
+            "name": "Contumaza",
+            "department": 6
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 59,
+        "fields": {
+            "name": "Cutervo",
+            "department": 6
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 60,
+        "fields": {
+            "name": "Hualgayoc",
+            "department": 6
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 61,
+        "fields": {
+            "name": "Jaen",
+            "department": 6
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 62,
+        "fields": {
+            "name": "San Ignacio",
+            "department": 6
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 63,
+        "fields": {
+            "name": "San Marcos",
+            "department": 6
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 64,
+        "fields": {
+            "name": "San Miguel",
+            "department": 6
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 65,
+        "fields": {
+            "name": "San Pablo",
+            "department": 6
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 66,
+        "fields": {
+            "name": "Santa Cruz",
+            "department": 6
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 67,
+        "fields": {
+            "name": "Callao",
+            "department": 7
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 68,
+        "fields": {
+            "name": "Cusco",
+            "department": 8
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 69,
+        "fields": {
+            "name": "Acomayo",
+            "department": 8
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 70,
+        "fields": {
+            "name": "Anta",
+            "department": 8
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 71,
+        "fields": {
+            "name": "Calca",
+            "department": 8
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 72,
+        "fields": {
+            "name": "Canas",
+            "department": 8
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 73,
+        "fields": {
+            "name": "Canchis",
+            "department": 8
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 74,
+        "fields": {
+            "name": "Chumbivilcas",
+            "department": 8
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 75,
+        "fields": {
+            "name": "Espinar",
+            "department": 8
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 76,
+        "fields": {
+            "name": "La Convencion",
+            "department": 8
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 77,
+        "fields": {
+            "name": "Paruro",
+            "department": 8
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 78,
+        "fields": {
+            "name": "Paucartambo",
+            "department": 8
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 79,
+        "fields": {
+            "name": "Quispicanchi",
+            "department": 8
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 80,
+        "fields": {
+            "name": "Urubamba",
+            "department": 8
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 81,
+        "fields": {
+            "name": "Huancavelica",
+            "department": 9
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 82,
+        "fields": {
+            "name": "Acobamba",
+            "department": 9
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 83,
+        "fields": {
+            "name": "Angaraes",
+            "department": 9
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 84,
+        "fields": {
+            "name": "Castrovirreyna",
+            "department": 9
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 85,
+        "fields": {
+            "name": "Churcampa",
+            "department": 9
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 86,
+        "fields": {
+            "name": "Huaytara",
+            "department": 9
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 87,
+        "fields": {
+            "name": "Tayacaja",
+            "department": 9
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 88,
+        "fields": {
+            "name": "Huanuco",
+            "department": 10
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 89,
+        "fields": {
+            "name": "Ambo",
+            "department": 10
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 90,
+        "fields": {
+            "name": "Dos de Mayo",
+            "department": 10
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 91,
+        "fields": {
+            "name": "Huacaybamba",
+            "department": 10
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 92,
+        "fields": {
+            "name": "Huamalies",
+            "department": 10
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 93,
+        "fields": {
+            "name": "Leoncio Prado",
+            "department": 10
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 94,
+        "fields": {
+            "name": "Mara\u00f1on",
+            "department": 10
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 95,
+        "fields": {
+            "name": "Pachitea",
+            "department": 10
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 96,
+        "fields": {
+            "name": "Puerto Inca",
+            "department": 10
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 97,
+        "fields": {
+            "name": "Lauricocha",
+            "department": 10
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 98,
+        "fields": {
+            "name": "Yarowilca",
+            "department": 10
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 99,
+        "fields": {
+            "name": "Ica",
+            "department": 11
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 100,
+        "fields": {
+            "name": "Chincha",
+            "department": 11
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 101,
+        "fields": {
+            "name": "Nazca",
+            "department": 11
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 102,
+        "fields": {
+            "name": "Palpa",
+            "department": 11
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 103,
+        "fields": {
+            "name": "Pisco",
+            "department": 11
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 104,
+        "fields": {
+            "name": "Huancayo",
+            "department": 12
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 105,
+        "fields": {
+            "name": "Concepcion",
+            "department": 12
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 106,
+        "fields": {
+            "name": "Chanchamayo",
+            "department": 12
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 107,
+        "fields": {
+            "name": "Jauja",
+            "department": 12
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 108,
+        "fields": {
+            "name": "Junin",
+            "department": 12
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 109,
+        "fields": {
+            "name": "Satipo",
+            "department": 12
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 110,
+        "fields": {
+            "name": "Tarma",
+            "department": 12
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 111,
+        "fields": {
+            "name": "Yauli",
+            "department": 12
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 112,
+        "fields": {
+            "name": "Chupaca",
+            "department": 12
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 113,
+        "fields": {
+            "name": "Trujillo",
+            "department": 13
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 114,
+        "fields": {
+            "name": "Ascope",
+            "department": 13
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 115,
+        "fields": {
+            "name": "Bolivar",
+            "department": 13
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 116,
+        "fields": {
+            "name": "Chepen",
+            "department": 13
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 117,
+        "fields": {
+            "name": "Julcan",
+            "department": 13
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 118,
+        "fields": {
+            "name": "Otuzco",
+            "department": 13
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 119,
+        "fields": {
+            "name": "Pacasmayo",
+            "department": 13
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 120,
+        "fields": {
+            "name": "Pataz",
+            "department": 13
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 121,
+        "fields": {
+            "name": "Sanchez Carrion",
+            "department": 13
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 122,
+        "fields": {
+            "name": "Santiago de Chuco",
+            "department": 13
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 123,
+        "fields": {
+            "name": "Gran Chimu",
+            "department": 13
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 124,
+        "fields": {
+            "name": "Viru",
+            "department": 13
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 125,
+        "fields": {
+            "name": "Chiclayo",
+            "department": 14
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 126,
+        "fields": {
+            "name": "Ferre\u00f1afe",
+            "department": 14
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 127,
+        "fields": {
+            "name": "Lambayeque",
+            "department": 14
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 128,
+        "fields": {
+            "name": "Lima",
+            "department": 15
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 129,
+        "fields": {
+            "name": "Barranca",
+            "department": 15
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 130,
+        "fields": {
+            "name": "Cajatambo",
+            "department": 15
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 131,
+        "fields": {
+            "name": "Canta",
+            "department": 15
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 132,
+        "fields": {
+            "name": "Ca\u00f1ete",
+            "department": 15
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 133,
+        "fields": {
+            "name": "Huaral",
+            "department": 15
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 134,
+        "fields": {
+            "name": "Huarochiri",
+            "department": 15
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 135,
+        "fields": {
+            "name": "Huaura",
+            "department": 15
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 136,
+        "fields": {
+            "name": "Oyon",
+            "department": 15
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 137,
+        "fields": {
+            "name": "Yauyos",
+            "department": 15
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 138,
+        "fields": {
+            "name": "Maynas",
+            "department": 16
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 139,
+        "fields": {
+            "name": "Alto Amazonas",
+            "department": 16
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 140,
+        "fields": {
+            "name": "Loreto",
+            "department": 16
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 141,
+        "fields": {
+            "name": "Mariscal Ramon Castilla",
+            "department": 16
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 142,
+        "fields": {
+            "name": "Requena",
+            "department": 16
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 143,
+        "fields": {
+            "name": "Ucayali",
+            "department": 16
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 144,
+        "fields": {
+            "name": "Datem del Mara\u00f1on",
+            "department": 16
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 145,
+        "fields": {
+            "name": "Tambopata",
+            "department": 17
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 146,
+        "fields": {
+            "name": "Manu",
+            "department": 17
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 147,
+        "fields": {
+            "name": "Tahuamanu",
+            "department": 17
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 148,
+        "fields": {
+            "name": "Mariscal Nieto",
+            "department": 18
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 149,
+        "fields": {
+            "name": "General Sanchez Cerr",
+            "department": 18
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 150,
+        "fields": {
+            "name": "Ilo",
+            "department": 18
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 151,
+        "fields": {
+            "name": "Pasco",
+            "department": 19
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 152,
+        "fields": {
+            "name": "Daniel Alcides Carri",
+            "department": 19
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 153,
+        "fields": {
+            "name": "Oxapampa",
+            "department": 19
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 154,
+        "fields": {
+            "name": "Piura",
+            "department": 20
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 155,
+        "fields": {
+            "name": "Ayabaca",
+            "department": 20
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 156,
+        "fields": {
+            "name": "Huancabamba",
+            "department": 20
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 157,
+        "fields": {
+            "name": "Morropon",
+            "department": 20
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 158,
+        "fields": {
+            "name": "Paita",
+            "department": 20
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 159,
+        "fields": {
+            "name": "Sullana",
+            "department": 20
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 160,
+        "fields": {
+            "name": "Talara",
+            "department": 20
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 161,
+        "fields": {
+            "name": "Sechura",
+            "department": 20
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 162,
+        "fields": {
+            "name": "Puno",
+            "department": 21
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 163,
+        "fields": {
+            "name": "Azangaro",
+            "department": 21
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 164,
+        "fields": {
+            "name": "Carabaya",
+            "department": 21
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 165,
+        "fields": {
+            "name": "Chucuito",
+            "department": 21
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 166,
+        "fields": {
+            "name": "El Collao",
+            "department": 21
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 167,
+        "fields": {
+            "name": "Huancane",
+            "department": 21
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 168,
+        "fields": {
+            "name": "Lampa",
+            "department": 21
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 169,
+        "fields": {
+            "name": "Melgar",
+            "department": 21
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 170,
+        "fields": {
+            "name": "Moho",
+            "department": 21
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 171,
+        "fields": {
+            "name": "San Antonio de Putin",
+            "department": 21
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 172,
+        "fields": {
+            "name": "San Roman",
+            "department": 21
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 173,
+        "fields": {
+            "name": "Sandia",
+            "department": 21
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 174,
+        "fields": {
+            "name": "Yunguyo",
+            "department": 21
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 175,
+        "fields": {
+            "name": "Moyobamba",
+            "department": 22
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 176,
+        "fields": {
+            "name": "Bellavista",
+            "department": 22
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 177,
+        "fields": {
+            "name": "El Dorado",
+            "department": 22
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 178,
+        "fields": {
+            "name": "Huallaga",
+            "department": 22
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 179,
+        "fields": {
+            "name": "Lamas",
+            "department": 22
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 180,
+        "fields": {
+            "name": "Mariscal Caceres",
+            "department": 22
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 181,
+        "fields": {
+            "name": "Picota",
+            "department": 22
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 182,
+        "fields": {
+            "name": "Rioja",
+            "department": 22
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 183,
+        "fields": {
+            "name": "San Martin",
+            "department": 22
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 184,
+        "fields": {
+            "name": "Tocache",
+            "department": 22
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 185,
+        "fields": {
+            "name": "Tacna",
+            "department": 23
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 186,
+        "fields": {
+            "name": "Candarave",
+            "department": 23
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 187,
+        "fields": {
+            "name": "Jorge Basadre",
+            "department": 23
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 188,
+        "fields": {
+            "name": "Tarata",
+            "department": 23
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 189,
+        "fields": {
+            "name": "Tumbes",
+            "department": 24
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 190,
+        "fields": {
+            "name": "Contralmirante Villa",
+            "department": 24
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 191,
+        "fields": {
+            "name": "Zarumilla",
+            "department": 24
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 192,
+        "fields": {
+            "name": "Coronel Portillo",
+            "department": 25
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 193,
+        "fields": {
+            "name": "Atalaya",
+            "department": 25
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 194,
+        "fields": {
+            "name": "Padre Abad",
+            "department": 25
+        }
+    },
+    {
+        "model": "agricultores.region",
+        "pk": 195,
+        "fields": {
+            "name": "Purus",
+            "department": 25
+        }
+    }
+]

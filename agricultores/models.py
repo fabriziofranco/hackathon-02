@@ -55,11 +55,14 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    ROL = [('ag', 'Agricultor'), ('an', 'Anunciante'), ('co', 'Comprador')]
     phone_number = PhoneNumberField(null=False, blank=False, unique=True)
     email = models.EmailField(
         verbose_name='email address',
         max_length=255,
         unique=True,
+        blank=True,
+        null=True,
     )
     first_name = models.CharField(max_length=30, null=True, blank=True)
     last_name = models.CharField(max_length=30, null=True, blank=True)
@@ -71,8 +74,10 @@ class User(AbstractBaseUser):
     longitude = models.FloatField(null=True, blank=True)
     district = models.ForeignKey(District, related_name='users', on_delete=models.CASCADE, null=True, blank=True)
     is_advertiser = models.BooleanField(default=False)
+    role = models.CharField(max_length=2, choices=ROL, null=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
 
     objects = UserManager()
 
