@@ -7,6 +7,7 @@ from agricultores.models import Department, District, Region, Supply, Advertisem
 
 class UserSerializer(serializers.ModelSerializer):
     district = serializers.StringRelatedField()
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = get_user_model()
@@ -28,6 +29,18 @@ class UserSerializer(serializers.ModelSerializer):
             'is_verified',
             'password'
         ]
+
+    def create(self, validated_data):
+        user = get_user_model().objects.create(
+            phone_number=validated_data['phone_number'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
+            DNI=validated_data['DNI'],
+            RUC=validated_data['RUC'],
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 
 class DistrictSerializer(serializers.ModelSerializer):
