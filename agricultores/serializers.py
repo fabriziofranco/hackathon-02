@@ -25,7 +25,8 @@ class UserSerializer(serializers.ModelSerializer):
             'longitude',
             'is_advertiser',
             'role',
-            'is_verified'
+            'is_verified',
+            'password'
         ]
 
 

@@ -22,6 +22,7 @@ class ActionBasedPermission(AllowAny):
     """
     Grant or deny access to a view, based on a mapping in view.action_permissions
     """
+
     def has_permission(self, request, view):
         for klass, actions in getattr(view, 'action_permissions', {}).items():
             if view.action in actions:
@@ -36,7 +37,7 @@ class UserViewSet(viewsets.ModelViewSet):
     user = get_user_model()
     queryset = user.objects.all().order_by('id')
     serializer_class = UserSerializer
-    permission_classes = [ActionBasedPermission,]
+    permission_classes = [ActionBasedPermission, ]
     action_permissions = {
         permissions.IsAuthenticated: ['update', 'partial_update', 'destroy', 'list', 'retrieve'],
         AllowAny: ['create']
@@ -122,6 +123,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     pagination_class = None
     permission_classes = [permissions.IsAuthenticated]
 
+
 class PhoneVerification(APIView):
     permission_classes = [permissions.IsAuthenticated]
     client = Client(environ.Env().str('TWILIO_ACCOUNT_SID'), environ.Env().str('TWILIO_AUTH_TOKEN'))
@@ -154,6 +156,7 @@ class PhoneVerification(APIView):
             return Response(response.status)
         except twilio.base.exceptions.TwilioRestException as e:
             return HttpResponse(e, status=400)
+
 
 class HelloView(APIView):
     permission_classes = [permissions.IsAuthenticated]
