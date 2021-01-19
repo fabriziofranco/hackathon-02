@@ -5,6 +5,7 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view, schema
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -17,6 +18,17 @@ from agricultores.serializers import UserSerializer, DepartmentSerializer, Regio
     SuppliesSerializer, AdvertisementSerializer, AdressedToSerializer, PublishSerializer, OrderSerializer
 
 
+class ActionBasedPermission(AllowAny):
+    """
+    Grant or deny access to a view, based on a mapping in view.action_permissions
+    """
+    def has_permission(self, request, view):
+        for klass, actions in getattr(view, 'action_permissions', {}).items():
+            if view.action in actions:
+                return klass().has_permission(request, view)
+        return False
+
+
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -24,7 +36,11 @@ class UserViewSet(viewsets.ModelViewSet):
     user = get_user_model()
     queryset = user.objects.all().order_by('id')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [ActionBasedPermission,]
+    action_permissions = {
+        permissions.IsAuthenticated: ['update', 'partial_update', 'destroy', 'list', 'retrieve'],
+        AllowAny: ['create']
+    }
 
 
 class DepartmentViewSet(viewsets.ModelViewSet):
