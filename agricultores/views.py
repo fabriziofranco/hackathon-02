@@ -16,6 +16,18 @@ from agricultores.models import Department, Region, District, Supply, Advertisem
 from agricultores.serializers import UserSerializer, DepartmentSerializer, RegionSerializer, DistrictSerializer, \
     SuppliesSerializer, AdvertisementSerializer, AdressedToSerializer, PublishSerializer, OrderSerializer
 
+from rest_framework import generics
+
+
+class TestView(generics.ListAPIView):
+    serializer_class = RegionSerializer
+
+    def get_queryset(self):
+        department_id = self.request.query_params.get('department', '')
+        #name_id = self.request.query_params.get('name', '')
+        #return Region.objects.filter(department=department_id,name=name_id)
+        return Region.objects.filter(department=department_id)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -106,6 +118,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     pagination_class = None
     permission_classes = [permissions.IsAuthenticated]
 
+
 class PhoneVerification(APIView):
     permission_classes = [permissions.IsAuthenticated]
     client = Client(environ.Env().str('TWILIO_ACCOUNT_SID'), environ.Env().str('TWILIO_AUTH_TOKEN'))
@@ -138,6 +151,7 @@ class PhoneVerification(APIView):
             return Response(response.status)
         except twilio.base.exceptions.TwilioRestException as e:
             return HttpResponse(e, status=400)
+
 
 class HelloView(APIView):
     permission_classes = [permissions.IsAuthenticated]
