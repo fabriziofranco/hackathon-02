@@ -1,0 +1,177 @@
+[
+    {
+        "model": "agricultores.supply",
+        "pk": 1,
+        "fields": {
+            "name": "Papa"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 2,
+        "fields": {
+            "name": "Camote"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 3,
+        "fields": {
+            "name": "Yuca"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 4,
+        "fields": {
+            "name": "Arroz"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 5,
+        "fields": {
+            "name": "Algarrobina"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 6,
+        "fields": {
+            "name": "Beterraga"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 7,
+        "fields": {
+                "name": "Zapallo"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 8,
+        "fields": {
+            "name": "Tomate"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 9,
+        "fields": {
+            "name": "Limón"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 10,
+        "fields": {
+            "name": "Fresa"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 11,
+        "fields": {
+            "name": "Mango"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 12,
+        "fields": {
+            "name": "Frambuesa"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 13,
+        "fields": {
+            "name": "Ciruela"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 14,
+        "fields": {
+            "name": "Cereza"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 15,
+        "fields": {
+            "name": "Arandano"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 16,
+        "fields": {
+            "name": "Mora"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 17,
+        "fields": {
+            "name": "Palta"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 18,
+        "fields": {
+            "name": "Manzana"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 19,
+        "fields": {
+            "name": "Pera"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 20,
+        "fields": {
+            "name": "Platano"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 21,
+        "fields": {
+            "name": "Piña"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 22,
+        "fields": {
+            "name": "Sandia"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 23,
+        "fields": {
+            "name": "Tamarindo"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 24,
+        "fields": {
+            "name": "Tuna"
+        }
+    },
+    {
+        "model": "agricultores.supply",
+        "pk": 25,
+        "fields": {
+            "name": "Uva"
+        }
+    }
+]
