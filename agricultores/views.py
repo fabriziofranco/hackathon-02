@@ -17,16 +17,29 @@ from agricultores.serializers import UserSerializer, DepartmentSerializer, Regio
     SuppliesSerializer, AdvertisementSerializer, AdressedToSerializer, PublishSerializer, OrderSerializer
 
 from rest_framework import generics
+from django_filters import rest_framework as filters
 
 
-class TestView(generics.ListAPIView):
+class RegionFilterView(generics.ListAPIView):
     serializer_class = RegionSerializer
+    pagination_class = None
 
     def get_queryset(self):
         department_id = self.request.query_params.get('department', '')
         # name_id = self.request.query_params.get('name', '')
         # return Region.objects.filter(department=department_id,name=name_id)
         return Region.objects.filter(department=department_id)
+
+
+class DistrictFilterView(generics.ListAPIView):
+    serializer_class = DistrictSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        region_id = self.request.query_params.get('region', '')
+        # name_id = self.request.query_params.get('name', '')
+        # return Region.objects.filter(department=department_id,name=name_id)
+        return District.objects.filter(region=region_id)
 
 
 class UserViewSet(viewsets.ModelViewSet):
