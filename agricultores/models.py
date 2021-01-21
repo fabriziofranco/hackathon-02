@@ -8,7 +8,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 # Create your models here.
 
 class Department(models.Model):
-    name = models.CharField(max_length=25)
+    name = models.CharField(max_length=35)
 
     def __str__(self):
         return self.name
@@ -16,7 +16,7 @@ class Department(models.Model):
 
 class Region(models.Model):
     department = models.ForeignKey(Department, related_name='regions', on_delete=models.CASCADE)
-    name = models.CharField(max_length=25)
+    name = models.CharField(max_length=35)
 
     def __str__(self):
         return self.name
@@ -25,7 +25,7 @@ class Region(models.Model):
 class District(models.Model):
     region = models.ForeignKey(Region, related_name='districts', on_delete=models.CASCADE)
     department = models.ForeignKey(Department, related_name='districts', on_delete=models.CASCADE)
-    name = models.CharField(max_length=25)
+    name = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
