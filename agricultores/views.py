@@ -24,8 +24,8 @@ class TestView(generics.ListAPIView):
 
     def get_queryset(self):
         department_id = self.request.query_params.get('department', '')
-        #name_id = self.request.query_params.get('name', '')
-        #return Region.objects.filter(department=department_id,name=name_id)
+        # name_id = self.request.query_params.get('name', '')
+        # return Region.objects.filter(department=department_id,name=name_id)
         return Region.objects.filter(department=department_id)
 
 
