@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'agricultores.apps.AgricultoresConfig',
     'phonenumber_field',
     'rest_framework',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -141,3 +142,8 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
+
+#S3 AWS
+
+AWS_ACCESS_KEY_ID = env.str('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY')
