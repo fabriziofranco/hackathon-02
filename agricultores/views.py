@@ -213,14 +213,13 @@ class UploadProfilePicture(APIView):
         # synthesize a full file path; note that we included the filename
         file_path_within_bucket = os.path.join(
             file_directory_within_bucket,
-            request.user.phone_number.as_e164[1:]+file_obj.name
+            request.user.phone_number.as_e164[1:]+'|'+file_obj.name[:10]
         )
 
         media_storage = MediaStorage()
 
         media_storage.save(file_path_within_bucket, file_obj)
-        file_url = media_storage.url(file_path_within_bucket)
-
+        file_url = media_storage.url(file_path_within_bucket, parameters=None)
         request.user.profile_picture_URL = file_url
         request.user.save()
 
