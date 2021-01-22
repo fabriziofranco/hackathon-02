@@ -181,6 +181,9 @@ class PhoneVerification(APIView):
         code = request.data.get('code')
         try:
             response = self.check_verification_token(request.user.phone_number.as_e164, code)
+            if response.status == 'approved':
+                request.user.is_verified = True
+                request.user.save()
             return Response(response.status)
         except twilio.base.exceptions.TwilioRestException as e:
             return HttpResponse(e, status=400)
@@ -195,9 +198,10 @@ class HelloView(APIView):
 
 
 class UploadProfilePicture(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request, **kwargs):
         file_obj = request.FILES.get('file', '')
-
 
         # do your validation here e.g. file size/type check
         blob = file_obj.read()
@@ -228,3 +232,30 @@ class UploadProfilePicture(APIView):
             'fileUrl': file_url,
         })
 
+
+class ChangeUserUbigeo(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request):
+        try:
+            district = request.data.get('district')
+            request.user.district = District.objects.get(id=district)
+            request.user.save()
+            return HttpResponse('User updated correctly.', status=200)
+        except Exception as e:
+            return HttpResponse('Internal error.', status=400)
+
+
+class ChangeUserRol(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request):
+        try:
+            role = request.data.get('role')
+            if role != 'ag' and role != 'an' and role != 'co':
+                return HttpResponse('Rol seleccionado no existe.', status=404)
+            request.user.role = role
+            request.user.save()
+            return HttpResponse('Rol updated correctly.', status=200)
+        except Exception as e:
+            return HttpResponse('Internal error.', status=400)

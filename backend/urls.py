@@ -43,5 +43,7 @@ urlpatterns = [
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('hello/', views.HelloView.as_view(), name='hello'),
     path('api/filter/', include('agricultores.api_urls')),
-    path('uploadProfilePicture/', views.UploadProfilePicture.as_view())
+    path('uploadProfilePicture/', views.UploadProfilePicture.as_view()),
+    path('updateUbigeo/', views.ChangeUserUbigeo.as_view()),
+    path('updateRol/', views.ChangeUserRol.as_view()),
 ]
