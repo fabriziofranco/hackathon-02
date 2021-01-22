@@ -213,7 +213,7 @@ class UploadProfilePicture(APIView):
         # synthesize a full file path; note that we included the filename
         file_path_within_bucket = os.path.join(
             file_directory_within_bucket,
-            request.user.phone_number.as_e164[1:]
+            request.user.phone_number.as_e164[1:]+file_obj.name
         )
 
         media_storage = MediaStorage()
