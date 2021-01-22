@@ -1,5 +1,7 @@
+import os
+
 import twilio
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from rest_framework import viewsets
 from rest_framework import permissions
 from django.contrib.auth import get_user_model
@@ -17,6 +19,8 @@ from agricultores.serializers import UserSerializer, DepartmentSerializer, Regio
 
 from rest_framework import generics
 from django_filters import rest_framework as filters
+
+from backend.custom_storage import MediaStorage
 
 
 class RegionFilterView(generics.ListAPIView):
@@ -62,7 +66,8 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [ActionBasedPermission, ]
     action_permissions = {
-        permissions.IsAuthenticated: ['update', 'partial_update', 'destroy', 'list', 'retrieve'],
+        permissions.IsAuthenticated: ['update', 'partial_update', 'list', 'retrieve'],
+        permissions.IsAdminUser: ['destroy'],
         AllowAny: ['create']
     }
 
@@ -187,3 +192,40 @@ class HelloView(APIView):
     def get(self, request):
         content = {'message': 'Hello, World!'}
         return Response(content)
+
+
+class UploadProfilePicture(APIView):
+    def post(self, request, **kwargs):
+        file_obj = request.FILES.get('file', '')
+
+
+        # do your validation here e.g. file size/type check
+        blob = file_obj.read()
+        size = len(blob)
+        if size > (5 * 1024 * 1024): #5MB
+            return JsonResponse({
+            'message': 'Error: File is too large.'
+        }, status=413)
+
+        # organize a path for the file in bucket
+        file_directory_within_bucket = 'profile_pictures/'
+
+        # synthesize a full file path; note that we included the filename
+        file_path_within_bucket = os.path.join(
+            file_directory_within_bucket,
+            request.user.phone_number.as_e164[1:]
+        )
+
+        media_storage = MediaStorage()
+
+        media_storage.save(file_path_within_bucket, file_obj)
+        file_url = media_storage.url(file_path_within_bucket)
+
+        request.user.profile_picture_URL = file_url
+        request.user.save()
+
+        return JsonResponse({
+            'message': 'OK',
+            'fileUrl': file_url,
+        })
+
