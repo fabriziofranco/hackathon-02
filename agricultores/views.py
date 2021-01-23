@@ -239,7 +239,11 @@ class ChangeUserUbigeo(APIView):
     def put(self, request):
         try:
             district = request.data.get('district')
+            lat = request.data.get('lat')
+            lon = request.data.get('lon')
             request.user.district = District.objects.get(id=district)
+            request.user.latitude = float(lat)
+            request.user.longitude = float(lon)
             request.user.save()
             return HttpResponse('User updated correctly.', status=200)
         except Exception as e:
