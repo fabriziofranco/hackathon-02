@@ -38,9 +38,13 @@ urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'phoneVerification/', views.PhoneVerification.as_view()),
+    path('phoneVerification/', views.PhoneVerification.as_view()),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('hello/', views.HelloView.as_view(), name='hello'),
-    path('api/', include('agricultores.api_urls'))
+    path('api/filter/', include('agricultores.api_urls')),
+    path('uploadProfilePicture/', views.UploadProfilePicture.as_view()),
+    path('updateUbigeo/', views.ChangeUserUbigeo.as_view()),
+    path('updateRol/', views.ChangeUserRol.as_view()),
+    path('myInfo/', views.GetUserData.as_view()),
 ]
