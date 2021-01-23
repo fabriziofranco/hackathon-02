@@ -80,6 +80,8 @@ class AdressedToSerializer(serializers.ModelSerializer):
 
 
 class PublishSerializer(serializers.ModelSerializer):
+    supplies = SuppliesSerializer()
+
     class Meta:
         model = Publish
         fields = '__all__'
