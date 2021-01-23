@@ -1,7 +1,8 @@
 import os
 
 import twilio
-from django.http import Http404, HttpResponse, JsonResponse
+from django.core import serializers
+from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets
 from rest_framework import permissions
 from django.contrib.auth import get_user_model
@@ -18,7 +19,6 @@ from agricultores.serializers import UserSerializer, DepartmentSerializer, Regio
     SuppliesSerializer, AdvertisementSerializer, AdressedToSerializer, PublishSerializer, OrderSerializer
 
 from rest_framework import generics
-from django_filters import rest_framework as filters
 
 from backend.custom_storage import MediaStorage
 
@@ -263,3 +263,15 @@ class ChangeUserRol(APIView):
             return HttpResponse('Rol updated correctly.', status=200)
         except Exception as e:
             return HttpResponse('Internal error.', status=400)
+
+
+class GetUserData(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        data = serializers.serialize('json', self.get_queryset())
+        return HttpResponse(data, content_type="application/json")
+
+    def get_queryset(self):
+        return get_user_model().objects.filter(id=self.request.user.id)
+

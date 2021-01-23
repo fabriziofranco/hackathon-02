@@ -46,4 +46,5 @@ urlpatterns = [
     path('uploadProfilePicture/', views.UploadProfilePicture.as_view()),
     path('updateUbigeo/', views.ChangeUserUbigeo.as_view()),
     path('updateRol/', views.ChangeUserRol.as_view()),
+    path('myInfo/', views.GetUserData.as_view()),
 ]
