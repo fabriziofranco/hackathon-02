@@ -22,6 +22,8 @@ from rest_framework import generics
 
 from backend.custom_storage import MediaStorage
 
+from urllib.parse import urljoin, urlparse
+
 
 class RegionFilterView(generics.ListAPIView):
     serializer_class = RegionSerializer
@@ -223,13 +225,14 @@ class UploadProfilePicture(APIView):
         media_storage = MediaStorage()
 
         media_storage.save(file_path_within_bucket, file_obj)
-        file_url = media_storage.url(file_path_within_bucket, parameters=None)
-        request.user.profile_picture_URL = file_url
+        file_url = media_storage.url(file_path_within_bucket)
+        no_params_url = urljoin(file_url, urlparse(file_url).path)
+        request.user.profile_picture_URL = no_params_url
         request.user.save()
 
         return JsonResponse({
             'message': 'OK',
-            'fileUrl': file_url,
+            'fileUrl': no_params_url,
         })
 
 
