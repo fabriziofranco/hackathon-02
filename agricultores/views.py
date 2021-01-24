@@ -290,3 +290,12 @@ class GetUserData(APIView):
 
     def get_queryset(self):
         return get_user_model().objects.filter(id=self.request.user.id)
+
+
+class GetMyPub(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PublishSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        return Publish.objects.filter(user=self.request.user.id)
