@@ -285,7 +285,7 @@ class GetUserData(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        data = serializers.serialize('json', self.get_queryset())
+        data = serializers.serialize('json', self.get_queryset(),  use_natural_foreign_keys=True)
         return HttpResponse(data, content_type="application/json")
 
     def get_queryset(self):
