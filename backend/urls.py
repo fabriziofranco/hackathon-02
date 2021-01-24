@@ -47,5 +47,5 @@ urlpatterns = [
     path('updateUbigeo/', views.ChangeUserUbigeo.as_view()),
     path('updateRol/', views.ChangeUserRol.as_view()),
     path('myInfo/', views.GetUserData.as_view()),
-    path('myPub/', views.GetPub.as_view())
+    path('myPub/', views.GetMyPub.as_view()),
 ]

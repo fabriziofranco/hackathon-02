@@ -30,6 +30,9 @@ class District(models.Model):
     def __str__(self):
         return self.name
 
+    def natural_key(self):
+        return self.name + ', ' + self.region.name + ' (' + self.department.name + ')'
+
 
 class UserManager(BaseUserManager):
     def create_user(self, phone_number, password=None):
