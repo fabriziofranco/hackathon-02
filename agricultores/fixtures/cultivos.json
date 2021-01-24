@@ -1,0 +1,207 @@
+[
+    {
+        "model": "agricultores.user",
+        "pk": 2,
+        "fields": {
+            "phone_number": "+51987654321",
+            "role": "ag",
+            "district": "1312"
+        }
+    },
+    {
+        "model": "agricultores.publish",
+        "pk": 1,
+        "fields": {
+            "user": "2",
+            "supplies": "1",
+            "unit": "Kg",
+            "quantity":"5",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "1.5"
+        }
+    },
+    {
+        "model": "agricultores.publish",
+        "pk": 2,
+        "fields": {
+            "user": "2",
+            "supplies": "1",
+            "unit": "Kg",
+            "quantity":"10",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "2"
+        }
+    },
+    {
+        "model": "agricultores.publish",
+        "pk": 3,
+        "fields": {
+            "user": "2",
+            "supplies": "1",
+            "unit": "Kg",
+            "quantity":"1",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "4"
+        }
+    },
+    {
+        "model": "agricultores.publish",
+        "pk": 4,
+        "fields": {
+            "user": "2",
+            "supplies": "2",
+            "unit": "Kg",
+            "quantity":"5",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "1.5"
+        }
+    },
+    {
+        "model": "agricultores.publish",
+        "pk": 5,
+        "fields": {
+            "user": "2",
+            "supplies": "2",
+            "unit": "Kg",
+            "quantity":"10",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "2"
+        }
+    },
+    {
+        "model": "agricultores.publish",
+        "pk": 6,
+        "fields": {
+            "user": "2",
+            "supplies": "2",
+            "unit": "Kg",
+            "quantity":"1",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "4"
+        }
+    },
+
+        {
+        "model": "agricultores.publish",
+        "pk": 7,
+        "fields": {
+            "user": "2",
+            "supplies": "3",
+            "unit": "Kg",
+            "quantity":"5",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "1.5"
+        }
+    },
+    {
+        "model": "agricultores.publish",
+        "pk": 8,
+        "fields": {
+            "user": "2",
+            "supplies": "3",
+            "unit": "Kg",
+            "quantity":"10",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "2"
+        }
+    },
+    {
+        "model": "agricultores.publish",
+        "pk": 9,
+        "fields": {
+            "user": "2",
+            "supplies": "3",
+            "unit": "Kg",
+            "quantity":"1",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "4"
+        }
+    },
+    {
+        "model": "agricultores.publish",
+        "pk": 10,
+        "fields": {
+            "user": "2",
+            "supplies": "4",
+            "unit": "Kg",
+            "quantity":"5",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "1.5"
+        }
+    },
+    {
+        "model": "agricultores.publish",
+        "pk": 11,
+        "fields": {
+            "user": "2",
+            "supplies": "4",
+            "unit": "Kg",
+            "quantity":"10",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "2"
+        }
+    },
+    {
+        "model": "agricultores.publish",
+        "pk": 12,
+        "fields": {
+            "user": "2",
+            "supplies": "4",
+            "unit": "Kg",
+            "quantity":"1",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "4"
+        }
+    },
+        {
+        "model": "agricultores.publish",
+        "pk": 13,
+        "fields": {
+            "user": "2",
+            "supplies": "5",
+            "unit": "Kg",
+            "quantity":"5",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "1.5"
+        }
+    },
+    {
+        "model": "agricultores.publish",
+        "pk": 14,
+        "fields": {
+            "user": "2",
+            "supplies": "5",
+            "unit": "Kg",
+            "quantity":"10",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "2"
+        }
+    },
+    {
+        "model": "agricultores.publish",
+        "pk": 15,
+        "fields": {
+            "user": "2",
+            "supplies": "5",
+            "unit": "Kg",
+            "quantity":"1",
+            "sowing_date":"2020-12-14T17:41:28+05:00",
+            "harvest_date": "2020-12-20T20:00:28-05:00",
+            "unit_price": "4"
+        }
+    }
+]

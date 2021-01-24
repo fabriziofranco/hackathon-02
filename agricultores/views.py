@@ -1,5 +1,5 @@
 import os
-
+import datetime
 import twilio
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse
@@ -25,14 +25,38 @@ from backend.custom_storage import MediaStorage
 from urllib.parse import urljoin, urlparse
 
 
+class PublishFilterView(generics.ListAPIView):
+    serializer_class = PublishSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        supply_id = self.request.query_params.get('supply', 0)
+        min_price = self.request.query_params.get('min_price', float('-inf'))
+        max_price = self.request.query_params.get('max_price', float('inf'))
+        min_date = self.request.query_params.get('min_date', datetime.date.min)
+        max_date = self.request.query_params.get('max_date', datetime.date.max)
+        department_id = self.request.query_params.get('department', 0)
+        region_id = self.request.query_params.get('region', 0)
+
+        temp = Publish.objects.filter(unit_price__gte=min_price,
+                                      unit_price__lte=max_price,
+                                      harvest_date__gte=min_date,
+                                      harvest_date__lte=max_date)
+        if supply_id != 0:
+            temp = temp.filter(supplies=supply_id)
+        if department_id != 0:
+            temp = temp.filter(user__district__department__id=department_id)
+        if region_id != 0:
+            temp = temp.filter(user__district__region__id=region_id)
+        return temp
+
+
 class RegionFilterView(generics.ListAPIView):
     serializer_class = RegionSerializer
     pagination_class = None
 
     def get_queryset(self):
         department_id = self.request.query_params.get('department', '')
-        # name_id = self.request.query_params.get('name', '')
-        # return Region.objects.filter(department=department_id,name=name_id)
         return Region.objects.filter(department=department_id)
 
 
@@ -42,8 +66,6 @@ class DistrictFilterView(generics.ListAPIView):
 
     def get_queryset(self):
         region_id = self.request.query_params.get('region', '')
-        # name_id = self.request.query_params.get('name', '')
-        # return Region.objects.filter(department=department_id,name=name_id)
         return District.objects.filter(region=region_id)
 
 
@@ -208,10 +230,10 @@ class UploadProfilePicture(APIView):
         # do your validation here e.g. file size/type check
         blob = file_obj.read()
         size = len(blob)
-        if size > (5 * 1024 * 1024): #5MB
+        if size > (5 * 1024 * 1024):  # 5MB
             return JsonResponse({
-            'message': 'Error: File is too large.'
-        }, status=413)
+                'message': 'Error: File is too large.'
+            }, status=413)
 
         # organize a path for the file in bucket
         file_directory_within_bucket = 'profile_pictures/'
@@ -219,7 +241,7 @@ class UploadProfilePicture(APIView):
         # synthesize a full file path; note that we included the filename
         file_path_within_bucket = os.path.join(
             file_directory_within_bucket,
-            request.user.phone_number.as_e164[1:]+'|'+file_obj.name[:10]
+            request.user.phone_number.as_e164[1:] + '|' + file_obj.name[:10]
         )
 
         media_storage = MediaStorage()
@@ -270,6 +292,7 @@ class ChangeUserRol(APIView):
 
 class GetUserData(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PublishSerializer
 
     def get(self, request):
         data = serializers.serialize('json', self.get_queryset())
@@ -278,3 +301,10 @@ class GetUserData(APIView):
     def get_queryset(self):
         return get_user_model().objects.filter(id=self.request.user.id)
 
+
+class GetPub(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PublishSerializer
+
+    def get_queryset(self):
+        return Publish.objects.filter(user=self.request.user.id)
