@@ -1,4 +1,5 @@
 import os
+from io import BytesIO
 
 import twilio
 from django.core import serializers
@@ -23,6 +24,10 @@ from rest_framework import generics
 from backend.custom_storage import MediaStorage
 
 from urllib.parse import urljoin, urlparse
+
+from PIL import Image, ImageOps, ExifTags
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files.base import ContentFile, File
 
 
 class RegionFilterView(generics.ListAPIView):
@@ -205,13 +210,21 @@ class UploadProfilePicture(APIView):
     def post(self, request, **kwargs):
         file_obj = request.FILES.get('file', '')
 
-        # do your validation here e.g. file size/type check
-        blob = file_obj.read()
-        size = len(blob)
-        if size > (5 * 1024 * 1024): #5MB
-            return JsonResponse({
-            'message': 'Error: File is too large.'
-        }, status=413)
+        # Compressing Image and Preventing Rotation
+        img = Image.open(file_obj)
+        exif = dict((ExifTags.TAGS[k], v) for k, v in img._getexif().items() if k in ExifTags.TAGS)
+        if exif['Orientation'] == 3:
+            img = img.rotate(180, expand=True)
+        elif exif['Orientation'] == 6:
+            img = img.rotate(270, expand=True)
+        elif exif['Orientation'] == 8:
+            img = img.rotate(90, expand=True)
+
+        img.thumbnail((500, 500), Image.ANTIALIAS)
+        thumb_io = BytesIO()
+        img.save(thumb_io, format='JPEG')
+        image_file = InMemoryUploadedFile(thumb_io, None, str(file_obj.name) + '.jpg', 'image/jpeg', thumb_io.tell,
+                                          None)
 
         # organize a path for the file in bucket
         file_directory_within_bucket = 'profile_pictures/'
@@ -219,12 +232,12 @@ class UploadProfilePicture(APIView):
         # synthesize a full file path; note that we included the filename
         file_path_within_bucket = os.path.join(
             file_directory_within_bucket,
-            request.user.phone_number.as_e164[1:]+'|'+file_obj.name[:10]
+            request.user.phone_number.as_e164[1:]
         )
 
         media_storage = MediaStorage()
 
-        media_storage.save(file_path_within_bucket, file_obj)
+        media_storage.save(file_path_within_bucket, image_file)
         file_url = media_storage.url(file_path_within_bucket)
         no_params_url = urljoin(file_url, urlparse(file_url).path)
         request.user.profile_picture_URL = no_params_url
@@ -277,4 +290,3 @@ class GetUserData(APIView):
 
     def get_queryset(self):
         return get_user_model().objects.filter(id=self.request.user.id)
-
