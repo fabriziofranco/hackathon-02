@@ -3,14 +3,15 @@ import datetime
 from io import BytesIO
 import twilio
 from django.core import serializers
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, Http404
 from rest_framework import viewsets
 from rest_framework import permissions
 from django.contrib.auth import get_user_model
+from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from purl import URL
 import environ
 from twilio import base
 from twilio.rest import Client
@@ -315,15 +316,56 @@ class GetUserData(APIView):
         return get_user_model().objects.filter(id=self.request.user.id)
 
 
-class GetMyPub(generics.ListAPIView):
+class GetMyPub(APIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = PublishSerializer
     pagination_class = None
 
+    def get_object(self, pk):
+        try:
+            return Publish.objects.get(pk=pk)
+        except Publish.DoesNotExist:
+            raise Http404
+
+
+    def put(self, request):
+        id_pub = self.request.query_params.get('id', 0)
+        publish = self.get_object(id_pub)
+        try:
+            for field in request.data.keys():
+                if field == 'supplies':
+                    supplies = request.data.get('supplies')
+                    publish.supplies = Supply.objects.get(id=int(supplies))
+                elif field == 'picture_URL':
+                    publish.harvest_date = URL(request.data.get('picture_URL'))
+                elif field == 'unit':
+                    publish.unit = str(request.data.get('unit'))
+                elif field == 'quantity':
+                    publish.quantity = int(request.data.get('quantity'))
+                elif field == 'harvest_date':
+                    publish.harvest_date = request.data.get('harvest_date')
+                elif field == 'sowing_date':
+                    publish.sowing_date = request.data.get('sowing_date')
+                elif field == 'unit_price':
+                    publish.unit_price = float(request.data.get('unit_price'))
+
+            publish.save()
+            return HttpResponse('Updated correctly.', status=200)
+        except Exception as e:
+            return HttpResponse('Internal error.', status=400)
+
+
     def get_queryset(self):
         id_pub = self.request.query_params.get('id', 0)
-        queryset = Publish.objects.filter(user=self.request.user.id)
+        queryset = Publish.objects.filter(user=2)
+        #queryset = Publish.objects.filter(user=self.request.user.id)
         if id_pub != 0:
             queryset = queryset.filter(id=id_pub)
         return queryset
-    # Example: http://127.0.0.1:8000/myPub/?id=2
+
+    def get(self, request):
+        data = serializers.serialize('json', self.get_queryset(), use_natural_foreign_keys=False)
+        return HttpResponse(data, content_type="application/json")
+
+    # GET- Example: http://127.0.0.1:8000/myPub/?id=2
+    # PUT- Example: http://127.0.0.1:8000/myPub/?id=2

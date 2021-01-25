@@ -17,3 +17,4 @@ psycopg2
 django-storages==1.11.1
 boto3==1.16.58
 Pillow==2.2.2
+purl==1.5
