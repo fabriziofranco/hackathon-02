@@ -248,7 +248,6 @@ class UploadProfilePicture(APIView):
         image_file = InMemoryUploadedFile(thumb_io, None, str(file_obj.name) + '.jpg', 'image/jpeg', thumb_io.tell,
                                           None)
 
-
         # organize a path for the file in bucket
         file_directory_within_bucket = 'profile_pictures/'
 
@@ -309,7 +308,7 @@ class GetUserData(APIView):
     serializer_class = PublishSerializer
 
     def get(self, request):
-        data = serializers.serialize('json', self.get_queryset(),  use_natural_foreign_keys=True)
+        data = serializers.serialize('json', self.get_queryset(), use_natural_foreign_keys=True)
         return HttpResponse(data, content_type="application/json")
 
     def get_queryset(self):
@@ -322,5 +321,9 @@ class GetMyPub(generics.ListAPIView):
     pagination_class = None
 
     def get_queryset(self):
-        return Publish.objects.filter(user=self.request.user.id)
-  
+        id_pub = self.request.query_params.get('id', 0)
+        queryset = Publish.objects.filter(user=self.request.user.id)
+        if id_pub != 0:
+            queryset = queryset.filter(id=id_pub)
+        return queryset
+    # Example: http://127.0.0.1:8000/myPub/?id=2
