@@ -50,4 +50,5 @@ urlpatterns = [
     path('myPub/', views.GetMyPub.as_view()),
     path('myPub/<int:pk>/', views.GetMyPub.as_view()),
     path('myOrder/', views.GetMyOrder.as_view()),
+    path('myOrder/<int:pk>/', views.GetMyOrder.as_view()),
 ]

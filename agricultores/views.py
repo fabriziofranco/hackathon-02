@@ -29,6 +29,8 @@ from urllib.parse import urljoin, urlparse
 from PIL import Image, ImageOps, ExifTags
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.files.base import ContentFile, File
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 class PublishFilterView(generics.ListAPIView):
@@ -369,16 +371,14 @@ class GetMyOrder(APIView):
     serializer_class = OrderSerializer
     pagination_class = None
 
-    def get_object(self, pk):
+    def get_object(self, request, pk):
         try:
-            # return Order.objects.get(pk=pk, user=2)
             return Order.objects.get(pk=pk, user=self.request.user.id)
         except Order.DoesNotExist:
             raise Http404
 
-    def put(self, request):
-        id_order = self.request.query_params.get('id', 0)
-        order = self.get_object(id_order)
+    def put(self, request, pk):
+        order = self.get_object(request, pk=pk)
         try:
             for field in request.data.keys():
                 if field == 'supplies':
@@ -396,19 +396,17 @@ class GetMyOrder(APIView):
                     order.unit_price = float(request.data.get('unit_price'))
 
             order.save()
-            return HttpResponse('Updated correctly.', status=200)
+            return self.get(request, pk=pk)
         except Exception as e:
             return HttpResponse('Internal error.', status=400)
 
-    def get_queryset(self):
-        id_order = self.request.query_params.get('id', 0)
-        # queryset = Order.objects.filter(user=2)
+    def get_queryset(self, pk=0):
         queryset = Order.objects.filter(user=self.request.user.id)
-        if id_order != 0:
-            queryset = queryset.filter(id=id_order)
+        if pk != 0:
+            queryset = queryset.filter(id=pk)
         return queryset
 
-    def get(self, request):
-        data = serializers.serialize('json', self.get_queryset(), use_natural_foreign_keys=False)
+    def get(self, request, pk=0):
+        data = serializers.serialize('json', self.get_queryset(pk=pk), use_natural_foreign_keys=False)
         return HttpResponse(data, content_type="application/json")
 
