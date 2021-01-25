@@ -368,3 +368,54 @@ class GetMyPub(APIView):
 
     # GET- Example: http://127.0.0.1:8000/myPub/?id=2
     # PUT- Example: http://127.0.0.1:8000/myPub/?id=2
+
+class GetMyOrder(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = OrderSerializer
+    pagination_class = None
+
+    def get_object(self, pk):
+        try:
+            # return Order.objects.get(pk=pk, user=2)
+            return Order.objects.get(pk=pk, user=self.request.user.id)
+        except Order.DoesNotExist:
+            raise Http404
+
+    def put(self, request):
+        id_order = self.request.query_params.get('id', 0)
+        order = self.get_object(id_order)
+        try:
+            for field in request.data.keys():
+                if field == 'supplies':
+                    supplies = request.data.get('supplies')
+                    order.supplies = Supply.objects.get(id=int(supplies))
+                elif field == 'unit':
+                    order.unit = str(request.data.get('unit'))
+                elif field == 'number':
+                    order.number = int(request.data.get('number'))
+                elif field == 'desire_harvest_date':
+                    order.desire_harvest_date = request.data.get('desire_harvest_date')
+                elif field == 'desire_sowing_date':
+                    order.desire_sowing_date = request.data.get('desire_sowing_date')
+                elif field == 'unit_price':
+                    order.unit_price = float(request.data.get('unit_price'))
+
+            order.save()
+            return HttpResponse('Updated correctly.', status=200)
+        except Exception as e:
+            return HttpResponse('Internal error.', status=400)
+
+    def get_queryset(self):
+        id_order = self.request.query_params.get('id', 0)
+        # queryset = Order.objects.filter(user=2)
+        queryset = Order.objects.filter(user=self.request.user.id)
+        if id_order != 0:
+            queryset = queryset.filter(id=id_order)
+        return queryset
+
+    def get(self, request):
+        data = serializers.serialize('json', self.get_queryset(), use_natural_foreign_keys=False)
+        return HttpResponse(data, content_type="application/json")
+
+    # GET- Example: http://127.0.0.1:8000/myPub/?id=2
+    # PUT- Example: http://127.0.0.1:8000/myPub/?id=2
