@@ -321,16 +321,14 @@ class GetMyPub(APIView):
     serializer_class = PublishSerializer
     pagination_class = None
 
-    def get_object(self, pk):
+    def get_object(self, request, pk):
         try:
-            # return Publish.objects.get(pk=pk, user=2)
             return Publish.objects.get(pk=pk, user=self.request.user.id)
         except Publish.DoesNotExist:
             raise Http404
 
-    def put(self, request):
-        id_pub = self.request.query_params.get('id', 0)
-        publish = self.get_object(id_pub)
+    def put(self, request, pk):
+        publish = self.get_object(request, pk=pk)
         try:
             for field in request.data.keys():
                 if field == 'supplies':
@@ -348,23 +346,20 @@ class GetMyPub(APIView):
                     publish.sowing_date = request.data.get('sowing_date')
                 elif field == 'unit_price':
                     publish.unit_price = float(request.data.get('unit_price'))
-
             publish.save()
-            return HttpResponse('Updated correctly.', status=200)
+            return self.get(request, pk=pk)
         except Exception as e:
             return HttpResponse('Internal error.', status=400)
 
-    def get_queryset(self):
-        id_pub = self.request.query_params.get('id', 0)
-        # queryset = Publish.objects.filter(user=2)
+    def get_queryset(self, pk=0):
         queryset = Publish.objects.filter(user=self.request.user.id)
-        if id_pub != 0:
-            queryset = queryset.filter(id=id_pub)
+        if pk != 0:
+            queryset = queryset.filter(id=pk)
         return queryset
 
-    def get(self, request):
-        data = serializers.serialize('json', self.get_queryset(), use_natural_foreign_keys=False)
+    def get(self, request, pk=0):
+        data = serializers.serialize('json', self.get_queryset(pk=pk), use_natural_foreign_keys=False)
+        if data == '[]':
+            return HttpResponse('Not Found.', status=404)
         return HttpResponse(data, content_type="application/json")
 
-    # GET- Example: http://127.0.0.1:8000/myPub/?id=2
-    # PUT- Example: http://127.0.0.1:8000/myPub/?id=2

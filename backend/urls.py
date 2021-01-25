@@ -48,4 +48,5 @@ urlpatterns = [
     path('updateRol/', views.ChangeUserRol.as_view()),
     path('myInfo/', views.GetUserData.as_view()),
     path('myPub/', views.GetMyPub.as_view()),
+    path('myPub/<int:pk>/', views.GetMyPub.as_view()),
 ]
