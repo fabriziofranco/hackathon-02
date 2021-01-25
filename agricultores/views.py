@@ -4,9 +4,11 @@ from io import BytesIO
 import twilio
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, Http404
-from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, status
 from rest_framework import permissions
 from django.contrib.auth import get_user_model
+from rest_framework.generics import ListAPIView
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
@@ -318,54 +320,6 @@ class GetUserData(APIView):
         return get_user_model().objects.filter(id=self.request.user.id)
 
 
-class GetMyPub(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = PublishSerializer
-    pagination_class = None
-
-    def get_object(self, request, pk):
-        try:
-            return Publish.objects.get(pk=pk, user=self.request.user.id)
-        except Publish.DoesNotExist:
-            raise Http404
-
-    def put(self, request, pk):
-        publish = self.get_object(request, pk=pk)
-        try:
-            for field in request.data.keys():
-                if field == 'supplies':
-                    supplies = request.data.get('supplies')
-                    publish.supplies = Supply.objects.get(id=int(supplies))
-                elif field == 'picture_URL':
-                    publish.harvest_date = URL(request.data.get('picture_URL'))
-                elif field == 'unit':
-                    publish.unit = str(request.data.get('unit'))
-                elif field == 'quantity':
-                    publish.quantity = int(request.data.get('quantity'))
-                elif field == 'harvest_date':
-                    publish.harvest_date = request.data.get('harvest_date')
-                elif field == 'sowing_date':
-                    publish.sowing_date = request.data.get('sowing_date')
-                elif field == 'unit_price':
-                    publish.unit_price = float(request.data.get('unit_price'))
-            publish.save()
-            return self.get(request, pk=pk)
-        except Exception as e:
-            return HttpResponse('Internal error.', status=400)
-
-    def get_queryset(self, pk=0):
-        queryset = Publish.objects.filter(user=self.request.user.id)
-        if pk != 0:
-            queryset = queryset.filter(id=pk)
-        return queryset
-
-    def get(self, request, pk=0):
-        data = serializers.serialize('json', self.get_queryset(pk=pk), use_natural_foreign_keys=False)
-        if data == '[]':
-            return HttpResponse('Not Found.', status=404)
-        return HttpResponse(data, content_type="application/json")
-
-
 class GetMyOrder(APIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = OrderSerializer
@@ -410,3 +364,31 @@ class GetMyOrder(APIView):
         data = serializers.serialize('json', self.get_queryset(pk=pk), use_natural_foreign_keys=False)
         return HttpResponse(data, content_type="application/json")
 
+
+class GetMyPubByID(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PublishSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        user = self.request.user
+        pk = self.kwargs['id']
+        return Publish.objects.filter(user=user, id=pk)
+
+    def put(self, request, *args, **kwargs):
+        device = self.get_queryset().first()
+        serializer = PublishSerializer(device, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetMyPub(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PublishSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        user = self.request.user
+        return Publish.objects.filter(user=user)

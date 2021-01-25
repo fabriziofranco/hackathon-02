@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
@@ -48,7 +48,7 @@ urlpatterns = [
     path('updateRol/', views.ChangeUserRol.as_view()),
     path('myInfo/', views.GetUserData.as_view()),
     path('myPub/', views.GetMyPub.as_view()),
-    path('myPub/<int:pk>/', views.GetMyPub.as_view()),
+    re_path('^myPub/(?P<id>.+)/$', views.GetMyPubByID.as_view()),
     path('myOrder/', views.GetMyOrder.as_view()),
     path('myOrder/<int:pk>/', views.GetMyOrder.as_view()),
 ]
