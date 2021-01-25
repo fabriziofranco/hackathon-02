@@ -323,10 +323,10 @@ class GetMyPub(APIView):
 
     def get_object(self, pk):
         try:
-            return Publish.objects.get(pk=pk)
+            # return Publish.objects.get(pk=pk, user=2)
+            return Publish.objects.get(pk=pk, user=self.request.user.id)
         except Publish.DoesNotExist:
             raise Http404
-
 
     def put(self, request):
         id_pub = self.request.query_params.get('id', 0)
@@ -354,11 +354,10 @@ class GetMyPub(APIView):
         except Exception as e:
             return HttpResponse('Internal error.', status=400)
 
-
     def get_queryset(self):
         id_pub = self.request.query_params.get('id', 0)
-        queryset = Publish.objects.filter(user=2)
-        #queryset = Publish.objects.filter(user=self.request.user.id)
+        # queryset = Publish.objects.filter(user=2)
+        queryset = Publish.objects.filter(user=self.request.user.id)
         if id_pub != 0:
             queryset = queryset.filter(id=id_pub)
         return queryset
