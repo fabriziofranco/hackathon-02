@@ -308,61 +308,43 @@ class ChangeUserRol(APIView):
             return HttpResponse('Internal error.', status=400)
 
 
-class GetUserData(APIView):
+class GetUserData(ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = PublishSerializer
-
-    def get(self, request):
-        data = serializers.serialize('json', self.get_queryset(), use_natural_foreign_keys=True)
-        return HttpResponse(data, content_type="application/json")
+    serializer_class = UserSerializer
+    pagination_class = None
 
     def get_queryset(self):
-        return get_user_model().objects.filter(id=self.request.user.id)
+        user = self.request.user.phone_number
+        return get_user_model().objects.filter(phone_number=user)
 
 
-class GetMyOrder(APIView):
+class GetMyOrderByID(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = OrderSerializer
     pagination_class = None
 
-    def get_object(self, request, pk):
-        try:
-            return Order.objects.get(pk=pk, user=self.request.user.id)
-        except Order.DoesNotExist:
-            raise Http404
+    def get_queryset(self):
+        user = self.request.user
+        pk = self.kwargs['id']
+        return Order.objects.filter(user=user, id=pk)
 
-    def put(self, request, pk):
-        order = self.get_object(request, pk=pk)
-        try:
-            for field in request.data.keys():
-                if field == 'supplies':
-                    supplies = request.data.get('supplies')
-                    order.supplies = Supply.objects.get(id=int(supplies))
-                elif field == 'unit':
-                    order.unit = str(request.data.get('unit'))
-                elif field == 'number':
-                    order.number = int(request.data.get('number'))
-                elif field == 'desire_harvest_date':
-                    order.desire_harvest_date = request.data.get('desire_harvest_date')
-                elif field == 'desire_sowing_date':
-                    order.desire_sowing_date = request.data.get('desire_sowing_date')
-                elif field == 'unit_price':
-                    order.unit_price = float(request.data.get('unit_price'))
+    def put(self, request, *args, **kwargs):
+        device = self.get_queryset().first()
+        serializer = OrderSerializer(device, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            order.save()
-            return self.get(request, pk=pk)
-        except Exception as e:
-            return HttpResponse('Internal error.', status=400)
 
-    def get_queryset(self, pk=0):
-        queryset = Order.objects.filter(user=self.request.user.id)
-        if pk != 0:
-            queryset = queryset.filter(id=pk)
-        return queryset
+class GetMyOrder(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = OrderSerializer
+    pagination_class = None
 
-    def get(self, request, pk=0):
-        data = serializers.serialize('json', self.get_queryset(pk=pk), use_natural_foreign_keys=False)
-        return HttpResponse(data, content_type="application/json")
+    def get_queryset(self):
+        user = self.request.user
+        return Order.objects.filter(user=user)
 
 
 class GetMyPubByID(generics.ListAPIView):

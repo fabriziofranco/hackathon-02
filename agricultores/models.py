@@ -30,9 +30,6 @@ class District(models.Model):
     def __str__(self):
         return self.name
 
-    def natural_key(self):
-        return self.name + ', ' + self.region.name + ' (' + self.department.name + ')'
-
 
 class UserManager(BaseUserManager):
     def create_user(self, phone_number, password=None):
@@ -81,6 +78,10 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
+
+    @property
+    def completed_location(self):
+        return self.district.name + ', ' + self.district.region.name + ' (' + self.district.department.name + ')'
 
     objects = UserManager()
 

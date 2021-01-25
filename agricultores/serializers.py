@@ -1,12 +1,34 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework.fields import Field, CharField
 
 from agricultores.models import Department, District, Region, Supply, Advertisement, AddressedTo, Publish, Order
 
 
+class RegionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Region
+        fields = ['id', 'name']
+
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = ['id', 'name']
+
+
+class DistrictSerializer(serializers.ModelSerializer):
+    region = RegionSerializer()
+    department = DepartmentSerializer()
+
+    class Meta:
+        model = District
+        fields = '__all__'
+
+
 class UserSerializer(serializers.ModelSerializer):
-    district = serializers.StringRelatedField()
+    district = CharField(source='completed_location')
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -43,22 +65,6 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class DistrictSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = District
-        fields = ['id', 'name']
-
-
-class RegionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Region
-        fields = ['id', 'name']
-
-
-class DepartmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Department
-        fields = ['id', 'name']
 
 
 class SuppliesSerializer(serializers.ModelSerializer):

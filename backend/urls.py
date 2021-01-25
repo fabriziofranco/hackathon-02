@@ -48,7 +48,7 @@ urlpatterns = [
     path('updateRol/', views.ChangeUserRol.as_view()),
     path('myInfo/', views.GetUserData.as_view()),
     path('myPub/', views.GetMyPub.as_view()),
-    re_path('^myPub/(?P<id>.+)/$', views.GetMyPubByID.as_view()),
+    re_path(r'myPub/(?P<id>\d+)/', views.GetMyPubByID.as_view()),
     path('myOrder/', views.GetMyOrder.as_view()),
-    path('myOrder/<int:pk>/', views.GetMyOrder.as_view()),
+    re_path(r'myOrder/(?P<id>\d+)/', views.GetMyOrderByID.as_view()),
 ]
