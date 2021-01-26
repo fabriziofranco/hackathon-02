@@ -336,6 +336,10 @@ class GetMyOrderByID(generics.ListAPIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, *args, **kwargs):
+        self.get_queryset().first().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class GetMyOrder(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -351,7 +355,7 @@ class GetMyOrder(generics.ListCreateAPIView):
         return super(GetMyOrder, self).perform_create(serializer)
 
 
-class GetMyPubByID(generics.ListAPIView):
+class GetMyPubByID(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = PublishSerializer
     pagination_class = None
@@ -368,6 +372,10 @@ class GetMyPubByID(generics.ListAPIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        self.get_queryset().first().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class GetMyPub(generics.ListCreateAPIView):
