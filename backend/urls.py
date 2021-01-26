@@ -51,4 +51,5 @@ urlpatterns = [
     re_path(r'myPub/(?P<id>\d+)/', views.GetMyPubByID.as_view()),
     path('myOrder/', views.GetMyOrder.as_view()),
     re_path(r'myOrder/(?P<id>\d+)/', views.GetMyOrderByID.as_view()),
+  #  path('createOrder/', views.CreateMyOrder.as_view()),
 ]
