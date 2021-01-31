@@ -61,6 +61,26 @@ class PublishFilterView(generics.ListAPIView):
         return temp
 
 
+class GetMyProspects(generics.ListAPIView):
+    serializer_class = OrderSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        my_supplies = Publish.objects.filter(user=self.request.user).values_list("supplies", flat=True)
+        query_set = Order.objects.filter(supplies__in=my_supplies).exclude(user=self.request.user)
+        return query_set
+
+
+class GetMySuggestions(generics.ListAPIView):
+    serializer_class = PublishSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        my_supplies = Order.objects.filter(user=self.request.user).values_list("supplies", flat=True)
+        query_set = Publish.objects.filter(supplies__in=my_supplies).exclude(user=self.request.user)
+        return query_set
+
+
 class RegionFilterView(generics.ListAPIView):
     serializer_class = RegionSerializer
     pagination_class = None
