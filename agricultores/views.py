@@ -34,6 +34,8 @@ from django.core.files.base import ContentFile, File
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 
+import secrets
+
 class PublishFilterView(generics.ListAPIView):
     serializer_class = PublishSerializer
     pagination_class = None
@@ -328,6 +330,55 @@ class UploadProfilePicture(APIView):
         no_params_url = urljoin(file_url, urlparse(file_url).path)
         request.user.profile_picture_URL = no_params_url
         request.user.save()
+
+        return JsonResponse({
+            'message': 'OK',
+            'fileUrl': no_params_url,
+        })
+
+
+class UploadPubPicture(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, **kwargs):
+        #APPEND IMAGE
+        file_obj = request.FILES.get('file', '')
+
+        # Compressing Image and Preventing Rotation
+        img = Image.open(file_obj)
+        exif = dict((ExifTags.TAGS[k], v) for k, v in img._getexif().items() if k in ExifTags.TAGS)
+        if exif['Orientation'] == 3:
+            img = img.rotate(180, expand=True)
+        elif exif['Orientation'] == 6:
+            img = img.rotate(270, expand=True)
+        elif exif['Orientation'] == 8:
+            img = img.rotate(90, expand=True)
+
+        thumb_io = BytesIO()
+        img.save(thumb_io, format='JPEG', quality=50, optimize=True)
+        image_file = InMemoryUploadedFile(thumb_io, None, str(file_obj.name) + '.jpg', 'image/jpeg', thumb_io.tell,
+                                          None)
+
+        # organize a path for the file in bucket
+        file_directory_within_bucket = 'pub_pictures/'
+
+        # synthesize a full file path; note that we included the filename
+        file_path_within_bucket = os.path.join(
+            file_directory_within_bucket,
+            secrets.token_urlsafe(22)
+        )
+
+        media_storage = MediaStorage()
+
+        media_storage.save(file_path_within_bucket, image_file)
+        file_url = media_storage.url(file_path_within_bucket)
+        no_params_url = urljoin(file_url, urlparse(file_url).path)
+
+        id_cultivo = self.kwargs['id']
+
+        pub = Publish.objects.get(id=id_cultivo, user_id=request.user.id)
+        pub.picture_URLs.append(no_params_url)
+        pub.save()
 
         return JsonResponse({
             'message': 'OK',
