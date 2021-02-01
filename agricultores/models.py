@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
@@ -128,28 +129,35 @@ class AddressedTo(models.Model):
     district = models.ForeignKey(District, on_delete=models.CASCADE)
 
 
-UNIT = [
-    ('Kg', 'Kilogramos'),
-    ('g', 'Gramos'),
+WEIGHT_UNITS = [
+    ('kg', 'Kilogramos'),
+    ('ton', 'Toneladas'),
 ]
 
-
-class Publish(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    supplies = models.ForeignKey(Supply, on_delete=models.CASCADE)
-    picture_URL = models.URLField(null=True, blank=True)
-    unit = models.CharField(max_length=2, choices=UNIT)
-    quantity = models.IntegerField()
-    harvest_date = models.DateTimeField()
-    sowing_date = models.DateTimeField()
-    unit_price = models.FloatField()
+AREA_UNITS = [
+    ('hm2', 'Hectáreas'),
+    ('m2', 'Metros cuadrados')
+]
 
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     supplies = models.ForeignKey(Supply, on_delete=models.CASCADE)
-    unit = models.CharField(max_length=2, choices=UNIT)
-    number = models.IntegerField()
+    weight_unit = models.CharField(max_length=3, choices=WEIGHT_UNITS)
     unit_price = models.FloatField()
-    desire_harvest_date = models.DateTimeField()
-    desire_sowing_date = models.DateTimeField()
+    area_unit = models.CharField(max_length=3, choices=AREA_UNITS)
+    area = models.FloatField()
+    desired_harvest_date = models.DateTimeField()
+    desired_sowing_date = models.DateTimeField()
+
+
+class Publish(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    supplies = models.ForeignKey(Supply, on_delete=models.CASCADE)
+    weight_unit = models.CharField(max_length=3, choices=WEIGHT_UNITS)
+    unit_price = models.FloatField()
+    area_unit = models.CharField(max_length=3, choices=AREA_UNITS)
+    area = models.FloatField()
+    harvest_date = models.DateTimeField()
+    sowing_date = models.DateTimeField()
+    picture_URLs = ArrayField(models.URLField(null=True, blank=True), blank=True)
