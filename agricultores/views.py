@@ -72,7 +72,7 @@ class CompradorFilterView(generics.ListAPIView):
         temp = User.objects.all()
         if supply_id != 0:
             users = Publish.objects.filter(supplies=supply_id).values_list("user", flat=True).distinct()
-            temp = temp.filter(id__in=users).exclude(id=self.request.user)
+            temp = temp.filter(id__in=users).exclude(id=self.request.user.id)
         if department_id != 0:
             temp = temp.filter(district__department__id=department_id)
         if region_id != 0:
@@ -91,8 +91,8 @@ class AgricultorFilterView(generics.ListAPIView):
 
         temp = User.objects.all()
         if supply_id != 0:
-            users = Order.objects.filter(supplies=supply_id).values_list("user", flat=True).distinct()
-            temp = temp.filter(id__in=users).exclude(id=self.request.user)
+            users = Order.objects.filter(supplies=supply_id).values_list("user", flat=True)
+            temp = temp.filter(id__in=users).exclude(id=self.request.user.id)
         if department_id != 0:
             temp = temp.filter(district__department__id=department_id)
         if region_id != 0:
