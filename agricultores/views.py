@@ -18,7 +18,7 @@ import environ
 from twilio import base
 from twilio.rest import Client
 
-from agricultores.models import Department, Region, District, Supply, Advertisement, AddressedTo, Publish, Order
+from agricultores.models import Department, Region, District, Supply, Advertisement, AddressedTo, Publish, Order, User
 from agricultores.serializers import UserSerializer, DepartmentSerializer, RegionSerializer, DistrictSerializer, \
     SuppliesSerializer, AdvertisementSerializer, AdressedToSerializer, PublishSerializer, OrderSerializer
 
@@ -33,7 +33,6 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.files.base import ContentFile, File
 import json
 from django.core.serializers.json import DjangoJSONEncoder
-
 
 class PublishFilterView(generics.ListAPIView):
     serializer_class = PublishSerializer
@@ -61,12 +60,52 @@ class PublishFilterView(generics.ListAPIView):
         return temp
 
 
+class CompradorFilterView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        supply_id = self.request.query_params.get('supply', 0)
+        department_id = self.request.query_params.get('department', 0)
+        region_id = self.request.query_params.get('region', 0)
+
+        temp = User.objects.all()
+        if supply_id != 0:
+            users = Order.objects.filter(supplies=supply_id).values_list("user", flat=True).distinct()
+            temp = temp.filter(id__in=users).exclude(id=self.request.user.id)
+        if department_id != 0:
+            temp = temp.filter(district__department__id=department_id)
+        if region_id != 0:
+            temp = temp.filter(district__region__id=region_id)
+        return temp
+
+
+class AgricultorFilterView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        supply_id = self.request.query_params.get('supply', 0)
+        department_id = self.request.query_params.get('department', 0)
+        region_id = self.request.query_params.get('region', 0)
+
+        temp = User.objects.all()
+        if supply_id != 0:
+            users = Publish.objects.filter(supplies=supply_id).values_list("user", flat=True).distinct()
+            temp = temp.filter(id__in=users).exclude(id=self.request.user.id)
+        if department_id != 0:
+            temp = temp.filter(district__department__id=department_id)
+        if region_id != 0:
+            temp = temp.filter(district__region__id=region_id)
+        return temp
+
+
 class GetMyProspects(generics.ListAPIView):
     serializer_class = OrderSerializer
     pagination_class = None
 
     def get_queryset(self):
-        my_supplies = Publish.objects.filter(user=self.request.user).values_list("supplies", flat=True)
+        my_supplies = Publish.objects.filter(user=self.request.user).values_list("supplies", flat=True).distinct()
         query_set = Order.objects.filter(supplies__in=my_supplies).exclude(user=self.request.user)
         return query_set
 
@@ -76,7 +115,7 @@ class GetMySuggestions(generics.ListAPIView):
     pagination_class = None
 
     def get_queryset(self):
-        my_supplies = Order.objects.filter(user=self.request.user).values_list("supplies", flat=True)
+        my_supplies = Order.objects.filter(user=self.request.user).values_list("supplies", flat=True).distinct()
         query_set = Publish.objects.filter(supplies__in=my_supplies).exclude(user=self.request.user)
         return query_set
 
