@@ -1,8 +1,6 @@
-from django.contrib.auth.models import User, Group
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from rest_framework.fields import Field, CharField
+from rest_framework.fields import CharField
 
 from agricultores.models import Department, District, Region, Supply, Advertisement, AddressedTo, Publish, Order
 
@@ -112,6 +110,7 @@ class PublishSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
+    supplies = RelatedFieldAlternative(queryset=Supply.objects.all(), serializer=SuppliesSerializer)
 
     class Meta:
         model = Order
