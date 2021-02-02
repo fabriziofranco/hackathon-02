@@ -46,7 +46,7 @@ class DistrictSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    district = CharField(source='completed_location')
+    district = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -81,6 +81,11 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+    def get_district(self, obj):
+        if obj.district is None:
+            return ""
+        return obj.district.name + ', ' + obj.district.region.name + ' (' + obj.district.department.name + ')'
 
 
 class SuppliesSerializer(serializers.ModelSerializer):
