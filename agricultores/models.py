@@ -80,10 +80,6 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
 
-    @property
-    def completed_location(self):
-        return self.district.name + ', ' + self.district.region.name + ' (' + self.district.department.name + ')'
-
     objects = UserManager()
 
     USERNAME_FIELD = 'phone_number'
