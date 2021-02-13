@@ -36,6 +36,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 import secrets
 
+
 class PublishFilterView(generics.ListAPIView):
     serializer_class = PublishSerializer
     pagination_class = None
@@ -341,7 +342,7 @@ class UploadPubPicture(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, **kwargs):
-        #APPEND IMAGE
+        # APPEND IMAGE
         file_obj = request.FILES.get('file', '')
 
         # Compressing Image and Preventing Rotation
@@ -500,3 +501,23 @@ class GetMyPub(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.validated_data['user'] = self.request.user
         return super(GetMyPub, self).perform_create(serializer)
+
+
+class GetMyFeaturedPub(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PublishSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        user = self.request.user
+        return Publish.objects.filter(user=user).order_by("-pk")[:4]
+
+
+class GetMyFeaturedOrder(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = OrderSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        user = self.request.user
+        return Order.objects.filter(user=user).order_by("-pk")[:4]
