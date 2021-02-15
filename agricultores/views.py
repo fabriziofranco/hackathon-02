@@ -36,6 +36,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 import secrets
 
+
 class PublishFilterView(generics.ListAPIView):
     serializer_class = PublishSerializer
     pagination_class = None
@@ -71,6 +72,9 @@ class CompradorFilterView(generics.ListAPIView):
         department_id = self.request.query_params.get('department', 0)
         region_id = self.request.query_params.get('region', 0)
 
+        if supply_id == 0 and department_id == 0 and region_id == 0:
+            return get_user_model().objects.filter(role="co")
+
         temp = User.objects.all()
         if supply_id != 0:
             users = Order.objects.filter(supplies=supply_id).values_list("user", flat=True).distinct()
@@ -90,6 +94,9 @@ class AgricultorFilterView(generics.ListAPIView):
         supply_id = self.request.query_params.get('supply', 0)
         department_id = self.request.query_params.get('department', 0)
         region_id = self.request.query_params.get('region', 0)
+
+        if supply_id == 0 and department_id == 0 and region_id == 0:
+            return get_user_model().objects.filter(role="ag")
 
         temp = User.objects.all()
         if supply_id != 0:
@@ -341,7 +348,7 @@ class UploadPubPicture(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, **kwargs):
-        #APPEND IMAGE
+        # APPEND IMAGE
         file_obj = request.FILES.get('file', '')
 
         # Compressing Image and Preventing Rotation
