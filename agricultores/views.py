@@ -207,7 +207,10 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all().order_by('id')
     serializer_class = DepartmentSerializer
     pagination_class = None
-    permission_classes = [permissions.IsAdminUser]
+    action_permissions = {
+        AllowAny: ['list', 'retrieve'],
+        permissions.IsAdminUser: ['destroy', 'create', 'update', 'partial_update', 'list', 'retrieve'],
+    }
 
 
 class RegionViewSet(viewsets.ModelViewSet):
@@ -217,7 +220,10 @@ class RegionViewSet(viewsets.ModelViewSet):
     queryset = Region.objects.all().order_by('id')
     serializer_class = RegionSerializer
     pagination_class = None
-    permission_classes = [permissions.IsAdminUser]
+    action_permissions = {
+        AllowAny: ['list', 'retrieve'],
+        permissions.IsAdminUser: ['destroy', 'create', 'update', 'partial_update', 'list', 'retrieve'],
+    }
 
 
 class DistrictViewSet(viewsets.ModelViewSet):
@@ -227,7 +233,10 @@ class DistrictViewSet(viewsets.ModelViewSet):
     queryset = District.objects.all().order_by('id')
     serializer_class = DistrictSerializer
     pagination_class = None
-    permission_classes = [permissions.IsAdminUser]
+    action_permissions = {
+        AllowAny: ['list', 'retrieve'],
+        permissions.IsAdminUser: ['destroy', 'create', 'update', 'partial_update', 'list', 'retrieve'],
+    }
 
 
 class SupplyViewSet(viewsets.ModelViewSet):
