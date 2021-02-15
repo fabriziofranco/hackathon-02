@@ -51,6 +51,8 @@ urlpatterns = [
     path('myPub/', views.GetMyPub.as_view()),
     path('myFeaturedPub/', views.GetMyFeaturedPub.as_view()),
     re_path(r'myPub/(?P<id>\d+)/', views.GetMyPubByID.as_view()),
+    re_path(r'Pubs/(?P<id>\d+)/', views.GetPubs.as_view()),
+    re_path(r'Orders/(?P<id>\d+)/', views.GetOrders.as_view()),
     path('myOrder/', views.GetMyOrder.as_view()),
     path('myFeaturedOrder/', views.GetMyFeaturedOrder.as_view()),
     re_path(r'myOrder/(?P<id>\d+)/', views.GetMyOrderByID.as_view()),

@@ -472,6 +472,26 @@ class GetMyOrder(generics.ListCreateAPIView):
         return super(GetMyOrder, self).perform_create(serializer)
 
 
+class GetPubs(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PublishSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        pk = self.kwargs['id']
+        return Publish.objects.filter(user=pk)
+
+
+class GetOrders(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = OrderSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        pk = self.kwargs['id']
+        return Order.objects.filter(user=pk)
+
+
 class GetMyPubByID(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = PublishSerializer
