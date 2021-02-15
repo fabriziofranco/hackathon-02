@@ -246,7 +246,10 @@ class SupplyViewSet(viewsets.ModelViewSet):
     queryset = Supply.objects.all().order_by('id')
     serializer_class = SuppliesSerializer
     pagination_class = None
-    permission_classes = [permissions.IsAdminUser]
+    action_permissions = {
+        permissions.IsAuthenticated: ['list', 'retrieve'],
+        permissions.IsAdminUser: ['destroy', 'create', 'update', 'partial_update', 'list', 'retrieve'],
+    }
 
 
 class AdvertisementViewSet(viewsets.ModelViewSet):
