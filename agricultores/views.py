@@ -507,3 +507,23 @@ class GetMyPub(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.validated_data['user'] = self.request.user
         return super(GetMyPub, self).perform_create(serializer)
+
+
+class GetMyFeaturedPub(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PublishSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        user = self.request.user
+        return Publish.objects.filter(user=user).order_by("-pk")[:4]
+
+
+class GetMyFeaturedOrder(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = OrderSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        user = self.request.user
+        return Order.objects.filter(user=user).order_by("-pk")[:4]
