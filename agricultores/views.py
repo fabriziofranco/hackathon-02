@@ -207,7 +207,7 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all().order_by('id')
     serializer_class = DepartmentSerializer
     pagination_class = None
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class RegionViewSet(viewsets.ModelViewSet):
@@ -217,7 +217,7 @@ class RegionViewSet(viewsets.ModelViewSet):
     queryset = Region.objects.all().order_by('id')
     serializer_class = RegionSerializer
     pagination_class = None
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class DistrictViewSet(viewsets.ModelViewSet):
@@ -227,7 +227,7 @@ class DistrictViewSet(viewsets.ModelViewSet):
     queryset = District.objects.all().order_by('id')
     serializer_class = DistrictSerializer
     pagination_class = None
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class SupplyViewSet(viewsets.ModelViewSet):
@@ -237,7 +237,7 @@ class SupplyViewSet(viewsets.ModelViewSet):
     queryset = Supply.objects.all().order_by('id')
     serializer_class = SuppliesSerializer
     pagination_class = None
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class AdvertisementViewSet(viewsets.ModelViewSet):
@@ -247,7 +247,7 @@ class AdvertisementViewSet(viewsets.ModelViewSet):
     queryset = Advertisement.objects.all().order_by('id')
     serializer_class = AdvertisementSerializer
     pagination_class = None
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class AddressedToViewSet(viewsets.ModelViewSet):
@@ -257,7 +257,7 @@ class AddressedToViewSet(viewsets.ModelViewSet):
     queryset = AddressedTo.objects.all().order_by('id')
     serializer_class = AdressedToSerializer
     pagination_class = None
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
 
 
 class PublishViewSet(viewsets.ModelViewSet):
@@ -267,7 +267,11 @@ class PublishViewSet(viewsets.ModelViewSet):
     queryset = Publish.objects.all().order_by('id')
     serializer_class = PublishSerializer
     pagination_class = None
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [ActionBasedPermission, ]
+    action_permissions = {
+        permissions.IsAuthenticated: ['list', 'retrieve'],
+        permissions.IsAdminUser: ['destroy', 'create', 'update', 'partial_update', 'list', 'retrieve'],
+    }
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -277,7 +281,11 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all().order_by('id')
     serializer_class = OrderSerializer
     pagination_class = None
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [ActionBasedPermission, ]
+    action_permissions = {
+        permissions.IsAuthenticated: ['list', 'retrieve'],
+        permissions.IsAdminUser: ['destroy', 'create', 'update', 'partial_update', 'list', 'retrieve'],
+    }
 
 
 class PhoneVerification(APIView):
