@@ -2,38 +2,25 @@ import os
 import datetime
 from io import BytesIO
 import twilio
-from django.core import serializers
-from django.http import HttpResponse, JsonResponse, Http404
-from django_filters.rest_framework import DjangoFilterBackend
+from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, status
 from rest_framework import permissions
 from django.contrib.auth import get_user_model
 from rest_framework.generics import ListAPIView
-from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from purl import URL
 import environ
 from twilio import base
 from twilio.rest import Client
-
 from agricultores.models import Department, Region, District, Supply, Advertisement, AddressedTo, Publish, Order, User
 from agricultores.serializers import UserSerializer, DepartmentSerializer, RegionSerializer, DistrictSerializer, \
     SuppliesSerializer, AdvertisementSerializer, AdressedToSerializer, PublishSerializer, OrderSerializer
-
 from rest_framework import generics
-
 from backend.custom_storage import MediaStorage
-
 from urllib.parse import urljoin, urlparse
-
-from PIL import Image, ImageOps, ExifTags
+from PIL import Image, ExifTags
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.core.files.base import ContentFile, File
-import json
-from django.core.serializers.json import DjangoJSONEncoder
-
 import secrets
 
 
