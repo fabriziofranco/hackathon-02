@@ -63,6 +63,32 @@ class PublishFilterView(generics.ListAPIView):
         return temp
 
 
+class OrderFilterView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        supply_id = self.request.query_params.get('supply', 0)
+        min_price = self.request.query_params.get('min_price', float('-inf'))
+        max_price = self.request.query_params.get('max_price', float('inf'))
+        min_date = self.request.query_params.get('min_date', datetime.date.min)
+        max_date = self.request.query_params.get('max_date', datetime.date.max)
+        department_id = self.request.query_params.get('department', 0)
+        region_id = self.request.query_params.get('region', 0)
+
+        temp = Order.objects.filter(unit_price__gte=min_price,
+                                    unit_price__lte=max_price,
+                                    desired_harvest_date__gte=min_date,
+                                    desired_harvest_date__lte=max_date)
+        if supply_id != 0:
+            temp = temp.filter(supplies=supply_id)
+        if department_id != 0:
+            temp = temp.filter(user__district__department__id=department_id)
+        if region_id != 0:
+            temp = temp.filter(user__district__region__id=region_id)
+        return temp
+
+
 class CompradorFilterView(generics.ListAPIView):
     serializer_class = UserSerializer
     pagination_class = None
