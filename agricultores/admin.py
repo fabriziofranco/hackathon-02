@@ -56,6 +56,7 @@ class UserChangeForm(forms.ModelForm):
                   'longitude',
                   'district',
                   'is_advertiser',
+                  'role',
                   'password',
                   'is_active',
                   'is_admin'
@@ -89,6 +90,7 @@ class UserAdmin(BaseUserAdmin):
                                       'district',
                                       'RUC',
                                       'DNI',
+                                      'role'
                                       )
                            }
          ),

@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
@@ -42,5 +42,21 @@ urlpatterns = [
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('hello/', views.HelloView.as_view(), name='hello'),
-    path('api/filter/', include('agricultores.api_urls'))
+    path('api/filter/', include('agricultores.api_urls')),
+    path('uploadProfilePicture/', views.UploadProfilePicture.as_view()),
+    re_path(r'uploadPubPicture/(?P<id>\d+)/', views.UploadPubPicture.as_view()),
+    path('updateUbigeo/', views.ChangeUserUbigeo.as_view()),
+    path('updateRol/', views.ChangeUserRol.as_view()),
+    path('myInfo/', views.GetUserData.as_view()),
+    path('myPub/', views.GetMyPub.as_view()),
+    path('myFeaturedPub/', views.GetMyFeaturedPub.as_view()),
+    re_path(r'myPub/(?P<id>\d+)/', views.GetMyPubByID.as_view()),
+    re_path(r'Pubs/(?P<id>\d+)/', views.GetPubs.as_view()),
+    re_path(r'OrdersUser/(?P<id>\d+)/', views.GetOrders.as_view()),
+    path('myOrder/', views.GetMyOrder.as_view()),
+    path('myFeaturedOrder/', views.GetMyFeaturedOrder.as_view()),
+    re_path(r'myOrder/(?P<id>\d+)/', views.GetMyOrderByID.as_view()),
+    path('myProspects/', views.GetMyProspects.as_view()),
+    path('mySuggestions/', views.GetMySuggestions.as_view()),
+    #  path('createOrder/', views.CreateMyOrder.as_view()),
 ]

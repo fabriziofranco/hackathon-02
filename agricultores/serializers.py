@@ -1,12 +1,50 @@
-from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework.fields import CharField
 
 from agricultores.models import Department, District, Region, Supply, Advertisement, AddressedTo, Publish, Order
 
 
+class RelatedFieldAlternative(serializers.PrimaryKeyRelatedField):
+    def __init__(self, **kwargs):
+        self.serializer = kwargs.pop('serializer', None)
+        if self.serializer is not None and not issubclass(self.serializer, serializers.Serializer):
+            raise TypeError('"serializer" is not a valid serializer class')
+
+        super().__init__(**kwargs)
+
+    def use_pk_only_optimization(self):
+        return False if self.serializer else True
+
+    def to_representation(self, instance):
+        if self.serializer:
+            return self.serializer(instance, context=self.context).data
+        return super().to_representation(instance)
+
+
+class RegionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Region
+        fields = ['id', 'name']
+
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = ['id', 'name']
+
+
+class DistrictSerializer(serializers.ModelSerializer):
+    region = RegionSerializer()
+    department = DepartmentSerializer()
+
+    class Meta:
+        model = District
+        fields = '__all__'
+
+
 class UserSerializer(serializers.ModelSerializer):
-    district = serializers.StringRelatedField()
+    district = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -42,23 +80,10 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-
-class DistrictSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = District
-        fields = ['id', 'name']
-
-
-class RegionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Region
-        fields = ['id', 'name']
-
-
-class DepartmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Department
-        fields = ['id', 'name']
+    def get_district(self, obj):
+        if obj.district is None:
+            return ""
+        return obj.district.name + ', ' + obj.district.region.name + ' (' + obj.district.department.name + ')'
 
 
 class SuppliesSerializer(serializers.ModelSerializer):
@@ -80,36 +105,18 @@ class AdressedToSerializer(serializers.ModelSerializer):
 
 
 class PublishSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    supplies = RelatedFieldAlternative(queryset=Supply.objects.all(), serializer=SuppliesSerializer)
+
     class Meta:
         model = Publish
         fields = '__all__'
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    supplies = RelatedFieldAlternative(queryset=Supply.objects.all(), serializer=SuppliesSerializer)
+
     class Meta:
         model = Order
         fields = '__all__'
-
-
-# class DistrictSerializer(serializers.ModelSerializer):
-#     users = UserSerializer(many=True, read_only=True)
-#
-#     class Meta:
-#         model = District
-#         fields = ['id', 'name', 'users']
-#
-#
-# class RegionSerializer(serializers.ModelSerializer):
-#     districts = DistrictSerializer(many=True, read_only=True)
-#
-#     class Meta:
-#         model = Region
-#         fields = ['id', 'name', 'districts']
-#
-#
-# class DepartmentSerializer(serializers.ModelSerializer):
-#     regions = RegionSerializer(many=True, read_only=True)
-#
-#     class Meta:
-#         model = Department
-#         fields = ['id', 'name', 'regions']
