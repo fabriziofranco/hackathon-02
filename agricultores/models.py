@@ -151,7 +151,7 @@ class Publish(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     supplies = models.ForeignKey(Supply, on_delete=models.CASCADE)
     weight_unit = models.CharField(max_length=3, choices=WEIGHT_UNITS)
-    unit_price = models.FloatField()
+    unit_price = models.FloatField(null=True, blank=True)
     area_unit = models.CharField(max_length=3, choices=AREA_UNITS)
     area = models.FloatField()
     harvest_date = models.DateTimeField()
