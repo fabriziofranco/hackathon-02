@@ -45,6 +45,7 @@ urlpatterns = [
     path('api/filter/', include('agricultores.api_urls')),
     path('uploadProfilePicture/', views.UploadProfilePicture.as_view()),
     re_path(r'uploadPubPicture/(?P<id>\d+)/', views.UploadPubPicture.as_view()),
+    re_path(r'detetePubPicture/(?P<id>\d+)/', views.DeletePubPicture.as_view()),
     path('updateUbigeo/', views.ChangeUserUbigeo.as_view()),
     path('updateRol/', views.ChangeUserRol.as_view()),
     path('myInfo/', views.GetUserData.as_view()),
