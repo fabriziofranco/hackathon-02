@@ -430,7 +430,7 @@ class UploadPubPicture(APIView):
 class DeletePubPicture(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def delete(self, request, **kwargs):
+    def post(self, request, **kwargs):
         try:
 
             id_cultivo = self.kwargs['id']
