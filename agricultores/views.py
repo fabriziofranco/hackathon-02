@@ -1,3 +1,4 @@
+import json
 import os
 import datetime
 from io import BytesIO
@@ -424,6 +425,39 @@ class UploadPubPicture(APIView):
             'message': 'OK',
             'fileUrl': no_params_url,
         })
+
+
+class DeletePubPicture(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, **kwargs):
+        try:
+
+            id_cultivo = self.kwargs['id']
+            list_of_urls_to_delete = request.data['picture_URLs']
+
+            # organize a path for the file in bucket
+            file_directory_within_bucket = 'pub_pictures/'
+
+            media_storage = MediaStorage()
+
+            pub = Publish.objects.get(id=id_cultivo, user_id=request.user.id)
+
+            for url in list_of_urls_to_delete:
+                file_path_within_bucket = os.path.join(
+                    file_directory_within_bucket,
+                    url.rsplit('/', 1)[-1]
+                )
+                print(file_path_within_bucket)
+                media_storage.delete(file_path_within_bucket)
+                pub.picture_URLs.remove(url)
+
+            pub.save()
+
+            return HttpResponse('Elementos eliminados correctamente.', status=204)
+
+        except Exception as e:
+            return HttpResponse('Internal error.', status=400)
 
 
 class ChangeUserUbigeo(APIView):
