@@ -29,7 +29,8 @@ class District(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}" + ", " + f"{self.region}" + ", " + f"{self.department}"
+
 
 
 class UserManager(BaseUserManager):
@@ -145,6 +146,10 @@ class Order(models.Model):
     area = models.FloatField()
     desired_harvest_date = models.DateTimeField()
     desired_sowing_date = models.DateTimeField()
+    is_solved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.supplies}"
 
 
 class Publish(models.Model):
@@ -157,3 +162,7 @@ class Publish(models.Model):
     harvest_date = models.DateTimeField()
     sowing_date = models.DateTimeField()
     picture_URLs = ArrayField(models.URLField(null=True, blank=True), blank=True)
+    is_sold = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.supplies}"

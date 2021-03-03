@@ -62,7 +62,6 @@ class UserChangeForm(forms.ModelForm):
                   'is_admin'
                   )
 
-
     def clean_password(self):
         # Regardless of what the user provides, return the initial value.
         # This is done here, rather than on the field, because the
@@ -94,9 +93,9 @@ class UserAdmin(BaseUserAdmin):
                                       )
                            }
          ),
-        ('Coordenadas', {'fields': ('latitude','longitude')}
+        ('Coordenadas', {'fields': ('latitude', 'longitude')}
          ),
-        ('Permissions', {'fields': ('is_admin','is_advertiser',)}),
+        ('Permissions', {'fields': ('is_admin', 'is_advertiser',)}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
@@ -111,18 +110,32 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 
+admin.site.site_header = "Panel Administrativo - COSECHA"
+
+
+class PublishAdmin(admin.ModelAdmin):
+    list_display = ('user', 'supplies', 'unit_price','weight_unit', 'harvest_date',
+                    'is_sold',"test")
+
+    list_filter = ('supplies', 'is_sold')
+
+
+    def test(self, obj):
+        return obj.user.district
+    test.short_description = 'User'
+    test.admin_order_field = 'user__district'
+
 # Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
-
 admin.site.register(Supply)
-admin.site.register(Publish)
+admin.site.register(Publish, PublishAdmin)
 admin.site.register(Order)
-admin.site.register(Advertisement)
-admin.site.register(AddressedTo)
+#admin.site.register(Advertisement)
+#admin.site.register(AddressedTo)
 
-admin.site.register(Department)
-admin.site.register(Region)
-admin.site.register(District)
+# admin.site.register(Department)
+# admin.site.register(Region)
+# admin.site.register(District)
