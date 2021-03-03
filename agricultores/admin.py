@@ -1,11 +1,15 @@
+from admin_numeric_filter.forms import RangeNumericForm, SliderNumericForm
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
+from admin_numeric_filter.admin import NumericFilterModelAdmin, SingleNumericFilter, RangeNumericFilter, \
+    SliderNumericFilter
 
 from agricultores.models import *
+
 
 
 class UserCreationForm(forms.ModelForm):
@@ -77,8 +81,8 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('phone_number', 'email', 'is_admin')
-    list_filter = ('is_admin',)
+    list_display = ('phone_number', 'first_name', 'last_name', 'email', 'role', 'district', 'is_admin')
+    list_filter = ('is_admin', 'role')
     fieldsets = (
         (None, {'fields': ('phone_number', 'password')}),
         ('Personal info', {'fields': ('email',
@@ -105,36 +109,92 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('phone_number', 'email', 'password1', 'password2'),
         }),
     )
-    search_fields = ('phone_number',)
+    search_fields = ('phone_number', 'email', 'first_name', 'last_name')
     ordering = ('phone_number',)
     filter_horizontal = ()
+
+
+class SupplyAdmin(admin.ModelAdmin):
+    list_display = ('name', 'count_cultivos_vendidos','count_cultivos_sin_vender',
+                    'count_pedidos_vendidos','count_pedidos_sin_vender',)
+    search_fields = ('name',)
+    ordering = ('name',)
+
+
+
+    def count_cultivos_vendidos(self, obj):
+        from django.db.models import Count
+        result = Publish.objects.filter(supplies=obj, is_sold=True).aggregate(Count("supplies"))
+        return result["supplies__count"]
+
+    count_cultivos_vendidos.short_description = "Nº Cultivos vendidos"
+
+    def count_cultivos_sin_vender(self, obj):
+        from django.db.models import Count
+        result = Publish.objects.filter(supplies=obj, is_sold=False).aggregate(Count("supplies"))
+        return result["supplies__count"]
+
+    count_cultivos_sin_vender.short_description = "Nº Cultivos sin vender"
+
+
+    def count_pedidos_vendidos(self, obj):
+        from django.db.models import Count
+        result = Order.objects.filter(supplies=obj, is_solved=True).aggregate(Count("supplies"))
+        return result["supplies__count"]
+
+    count_pedidos_vendidos.short_description = "Nº Pedidos vendidos"
+
+    def count_pedidos_sin_vender(self, obj):
+        from django.db.models import Count
+        result = Order.objects.filter(supplies=obj, is_solved=False).aggregate(Count("supplies"))
+        return result["supplies__count"]
+
+    count_pedidos_sin_vender.short_description = "Nº Pedidos sin vender"
+
+    #count_pedidos_sin_vender.admin_order_field = 'count_pedidos_sin_vender'
+
+
 
 
 admin.site.site_header = "Panel Administrativo - COSECHA"
 
 
 class PublishAdmin(admin.ModelAdmin):
-    list_display = ('user', 'supplies', 'unit_price','weight_unit', 'harvest_date',
-                    'is_sold',"test")
+    list_display = ('user', 'supplies', 'unit_price', 'weight_unit', 'harvest_date',
+                    'is_sold', "test")
 
-    list_filter = ('supplies', 'is_sold')
-
+    list_filter = (('unit_price', SliderNumericFilter), 'is_sold', 'supplies',
+                   )
 
     def test(self, obj):
         return obj.user.district
-    test.short_description = 'User'
+
+    test.short_description = 'DISTRICT'
     test.admin_order_field = 'user__district'
+
+
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('user', 'supplies', 'unit_price', 'weight_unit', 'desired_harvest_date',
+                    'is_solved', "test")
+
+    list_filter = (('unit_price', SliderNumericFilter), 'is_solved', 'supplies',
+                   )
+
+    def test(self, obj):
+        return obj.user.district
+
+    test.short_description = 'DISTRICT'
+    test.admin_order_field = 'user__district'
+
 
 # Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)
-# ... and, since we're not using Django's built-in permissions,
-# unregister the Group model from admin.
 admin.site.unregister(Group)
-admin.site.register(Supply)
+admin.site.register(Supply, SupplyAdmin)
 admin.site.register(Publish, PublishAdmin)
-admin.site.register(Order)
-#admin.site.register(Advertisement)
-#admin.site.register(AddressedTo)
+admin.site.register(Order, OrderAdmin)
+# admin.site.register(Advertisement)
+# admin.site.register(AddressedTo)
 
 # admin.site.register(Department)
 # admin.site.register(Region)

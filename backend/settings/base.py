@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'rest_framework',
     'storages',
+    'admin_numeric_filter',
 ]
 
 MIDDLEWARE = [
