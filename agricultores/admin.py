@@ -11,7 +11,6 @@ from admin_numeric_filter.admin import NumericFilterModelAdmin, SingleNumericFil
 from agricultores.models import *
 
 
-
 class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
@@ -115,45 +114,23 @@ class UserAdmin(BaseUserAdmin):
 
 
 class SupplyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'count_cultivos_vendidos','count_cultivos_sin_vender',
-                    'count_pedidos_vendidos','count_pedidos_sin_vender',)
+    list_display = ('name', 'sold_publications', 'unsold_publications', 'solved_orders', 'unsolved_orders',)
+
+    list_filter = (('sold_publications', SliderNumericFilter),
+                   ('unsold_publications', SliderNumericFilter),
+                   ('solved_orders', SliderNumericFilter),
+                   ('unsolved_orders', SliderNumericFilter),
+                   )
+
     search_fields = ('name',)
     ordering = ('name',)
 
-
-
-    def count_cultivos_vendidos(self, obj):
-        from django.db.models import Count
-        result = Publish.objects.filter(supplies=obj, is_sold=True).aggregate(Count("supplies"))
-        return result["supplies__count"]
-
-    count_cultivos_vendidos.short_description = "Nº Cultivos vendidos"
-
-    def count_cultivos_sin_vender(self, obj):
-        from django.db.models import Count
-        result = Publish.objects.filter(supplies=obj, is_sold=False).aggregate(Count("supplies"))
-        return result["supplies__count"]
-
-    count_cultivos_sin_vender.short_description = "Nº Cultivos sin vender"
-
-
-    def count_pedidos_vendidos(self, obj):
-        from django.db.models import Count
-        result = Order.objects.filter(supplies=obj, is_solved=True).aggregate(Count("supplies"))
-        return result["supplies__count"]
-
-    count_pedidos_vendidos.short_description = "Nº Pedidos vendidos"
-
-    def count_pedidos_sin_vender(self, obj):
-        from django.db.models import Count
-        result = Order.objects.filter(supplies=obj, is_solved=False).aggregate(Count("supplies"))
-        return result["supplies__count"]
-
-    count_pedidos_sin_vender.short_description = "Nº Pedidos sin vender"
-
-    #count_pedidos_sin_vender.admin_order_field = 'count_pedidos_sin_vender'
-
-
+    # def count_cultivos_vendidos(self, obj):
+    #     from django.db.models import Count
+    #     result = Publish.objects.filter(supplies=obj, is_sold=True).aggregate(Count("supplies"))
+    #     return result["supplies__count"]
+    #
+    # count_cultivos_vendidos.short_description = "Nº Cultivos vendidos"
 
 
 admin.site.site_header = "Panel Administrativo - COSECHA"
@@ -171,7 +148,7 @@ class PublishAdmin(admin.ModelAdmin):
 
     test.short_description = 'DISTRICT'
     test.admin_order_field = 'user__district'
-
+    ordering = ('is_sold','supplies')
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('user', 'supplies', 'unit_price', 'weight_unit', 'desired_harvest_date',
