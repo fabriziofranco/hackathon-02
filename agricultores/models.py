@@ -145,6 +145,7 @@ class Order(models.Model):
     area = models.FloatField()
     desired_harvest_date = models.DateTimeField()
     desired_sowing_date = models.DateTimeField()
+    is_solved = models.BooleanField(default=False)
 
 
 class Publish(models.Model):
@@ -157,3 +158,4 @@ class Publish(models.Model):
     harvest_date = models.DateTimeField()
     sowing_date = models.DateTimeField()
     picture_URLs = ArrayField(models.URLField(null=True, blank=True), blank=True)
+    is_sold = models.BooleanField(default=False)

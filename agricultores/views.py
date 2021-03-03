@@ -41,7 +41,8 @@ class PublishFilterView(generics.ListAPIView):
         temp = Publish.objects.filter(unit_price__gte=min_price,
                                       unit_price__lte=max_price,
                                       harvest_date__gte=min_date,
-                                      harvest_date__lte=max_date)
+                                      harvest_date__lte=max_date,
+                                      is_sold=False)
         if supply_id != 0:
             temp = temp.filter(supplies=supply_id)
         if department_id != 0:
@@ -67,7 +68,8 @@ class OrderFilterView(generics.ListAPIView):
         temp = Order.objects.filter(unit_price__gte=min_price,
                                     unit_price__lte=max_price,
                                     desired_harvest_date__gte=min_date,
-                                    desired_harvest_date__lte=max_date)
+                                    desired_harvest_date__lte=max_date,
+                                    is_solved=False)
         if supply_id != 0:
             temp = temp.filter(supplies=supply_id)
         if department_id != 0:
