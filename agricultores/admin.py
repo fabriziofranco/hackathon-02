@@ -140,8 +140,7 @@ class PublishAdmin(admin.ModelAdmin):
     list_display = ('user', 'supplies', 'unit_price', 'weight_unit', 'harvest_date',
                     'is_sold', "test")
 
-    list_filter = (('unit_price', SliderNumericFilter), 'is_sold', 'supplies',
-                   )
+    list_filter = (('unit_price', SliderNumericFilter), 'is_sold')
 
     def test(self, obj):
         return obj.user.district
@@ -150,19 +149,23 @@ class PublishAdmin(admin.ModelAdmin):
     test.admin_order_field = 'user__district'
     ordering = ('is_sold','supplies')
 
+    search_fields = ('user__district__name','user__district__region__name','user__district__department__name',
+                     'supplies__name')
+
+
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('user', 'supplies', 'unit_price', 'weight_unit', 'desired_harvest_date',
                     'is_solved', "test")
 
-    list_filter = (('unit_price', SliderNumericFilter), 'is_solved', 'supplies',
-                   )
+    list_filter = (('unit_price', SliderNumericFilter), 'is_solved' )
 
     def test(self, obj):
         return obj.user.district
 
     test.short_description = 'DISTRICT'
     test.admin_order_field = 'user__district'
-    search_fields = ('user__district__name','user__district__region__name','user__district__department__name')
+    search_fields = ('user__district__name','user__district__region__name','user__district__department__name','supplies__name')
+    ordering = ('is_solved', 'supplies')
 
 
 # Now register the new UserAdmin...
