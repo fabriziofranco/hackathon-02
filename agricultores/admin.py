@@ -162,6 +162,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     test.short_description = 'DISTRICT'
     test.admin_order_field = 'user__district'
+    search_fields = ('user__district__name','user__district__region__name','user__district__department__name')
 
 
 # Now register the new UserAdmin...
