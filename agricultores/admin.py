@@ -38,6 +38,12 @@ class UserCreationForm(forms.ModelForm):
         return user
 
 
+class SupplyCreationForm(forms.ModelForm):
+    class Meta:
+        model = Supply
+        fields = ('name', 'days_for_harvest')
+
+
 class UserChangeForm(forms.ModelForm):
     """A form for updating users. Includes all the fields on
     the user, but replaces the password field with admin's
@@ -70,6 +76,18 @@ class UserChangeForm(forms.ModelForm):
         # This is done here, rather than on the field, because the
         # field does not have access to the initial value
         return self.initial["password"]
+
+
+class SupplyForm(forms.ModelForm):
+    class Meta:
+        model = Supply
+        fields = ('name',
+                  'unsolved_orders',
+                  'solved_orders',
+                  'unsold_publications',
+                  'sold_publications',
+                  'days_for_harvest'
+                  )
 
 
 class UserAdmin(BaseUserAdmin):
@@ -124,13 +142,17 @@ class SupplyAdmin(admin.ModelAdmin):
 
     search_fields = ('name',)
     ordering = ('name',)
+    change_form = SupplyForm
+    add_form = SupplyCreationForm
 
-    # def count_cultivos_vendidos(self, obj):
-    #     from django.db.models import Count
-    #     result = Publish.objects.filter(supplies=obj, is_sold=True).aggregate(Count("supplies"))
-    #     return result["supplies__count"]
-    #
-    # count_cultivos_vendidos.short_description = "Nº Cultivos vendidos"
+
+    def get_form(self, request, obj=None, **kwargs):
+        if not obj:
+            self.form = self.add_form
+        else:
+            self.form = self.change_form
+
+        return super(SupplyAdmin, self).get_form(request, obj, **kwargs)
 
 
 admin.site.site_header = "Panel Administrativo - COSECHA"
@@ -147,9 +169,9 @@ class PublishAdmin(admin.ModelAdmin):
 
     test.short_description = 'DISTRICT'
     test.admin_order_field = 'user__district'
-    ordering = ('is_sold','supplies')
+    ordering = ('is_sold', 'supplies')
 
-    search_fields = ('user__district__name','user__district__region__name','user__district__department__name',
+    search_fields = ('user__district__name', 'user__district__region__name', 'user__district__department__name',
                      'supplies__name')
 
 
@@ -157,14 +179,15 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('user', 'supplies', 'unit_price', 'weight_unit', 'desired_harvest_date',
                     'is_solved', "test")
 
-    list_filter = (('unit_price', SliderNumericFilter), 'is_solved' )
+    list_filter = (('unit_price', SliderNumericFilter), 'is_solved')
 
     def test(self, obj):
         return obj.user.district
 
     test.short_description = 'DISTRICT'
     test.admin_order_field = 'user__district'
-    search_fields = ('user__district__name','user__district__region__name','user__district__department__name','supplies__name')
+    search_fields = (
+    'user__district__name', 'user__district__region__name', 'user__district__department__name', 'supplies__name')
     ordering = ('is_solved', 'supplies')
 
 
