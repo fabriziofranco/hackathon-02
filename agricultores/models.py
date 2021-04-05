@@ -32,7 +32,6 @@ class District(models.Model):
         return f"{self.name}" + ", " + f"{self.region}" + ", " + f"{self.department}"
 
 
-
 class UserManager(BaseUserManager):
     def create_user(self, phone_number, password=None):
         if not phone_number:
@@ -105,12 +104,26 @@ class User(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+    class Meta:
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
+
 
 class Supply(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, null=False, blank=False)
+    sold_publications = models.IntegerField(default=0)
+    unsold_publications = models.IntegerField(default=0)
+    solved_orders = models.IntegerField(default=0)
+    unsolved_orders = models.IntegerField(default=0)
+    days_for_harvest = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Insumo'
+        verbose_name_plural = 'Insumos'
+        ordering = ["name"]
 
 
 class Advertisement(models.Model):
@@ -151,6 +164,10 @@ class Order(models.Model):
     def __str__(self):
         return f"{self.supplies}"
 
+    class Meta:
+        verbose_name = 'Pedido'
+        verbose_name_plural = 'Pedidos'
+
 
 class Publish(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -166,3 +183,7 @@ class Publish(models.Model):
 
     def __str__(self):
         return f"{self.supplies}"
+
+    class Meta:
+        verbose_name = 'Cultivo'
+        verbose_name_plural = 'Cultivos'

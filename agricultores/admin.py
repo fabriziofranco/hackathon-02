@@ -1,9 +1,12 @@
+from admin_numeric_filter.forms import RangeNumericForm, SliderNumericForm
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
+from admin_numeric_filter.admin import NumericFilterModelAdmin, SingleNumericFilter, RangeNumericFilter, \
+    SliderNumericFilter
 
 from agricultores.models import *
 
@@ -33,6 +36,12 @@ class UserCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class SupplyCreationForm(forms.ModelForm):
+    class Meta:
+        model = Supply
+        fields = ('name', 'days_for_harvest')
 
 
 class UserChangeForm(forms.ModelForm):
@@ -69,6 +78,18 @@ class UserChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 
+class SupplyForm(forms.ModelForm):
+    class Meta:
+        model = Supply
+        fields = ('name',
+                  'unsolved_orders',
+                  'solved_orders',
+                  'unsold_publications',
+                  'sold_publications',
+                  'days_for_harvest'
+                  )
+
+
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
@@ -77,8 +98,8 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('phone_number', 'email', 'is_admin')
-    list_filter = ('is_admin',)
+    list_display = ('phone_number', 'first_name', 'last_name', 'email', 'role', 'district', 'is_admin')
+    list_filter = ('is_admin', 'role')
     fieldsets = (
         (None, {'fields': ('phone_number', 'password')}),
         ('Personal info', {'fields': ('email',
@@ -105,36 +126,79 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('phone_number', 'email', 'password1', 'password2'),
         }),
     )
-    search_fields = ('phone_number',)
+    search_fields = ('phone_number', 'email', 'first_name', 'last_name')
     ordering = ('phone_number',)
     filter_horizontal = ()
+
+
+class SupplyAdmin(admin.ModelAdmin):
+    list_display = ('name', 'sold_publications', 'unsold_publications', 'solved_orders', 'unsolved_orders',)
+
+    list_filter = (('sold_publications', SliderNumericFilter),
+                   ('unsold_publications', SliderNumericFilter),
+                   ('solved_orders', SliderNumericFilter),
+                   ('unsolved_orders', SliderNumericFilter),
+                   )
+
+    search_fields = ('name',)
+    ordering = ('name',)
+    change_form = SupplyForm
+    add_form = SupplyCreationForm
+
+
+    def get_form(self, request, obj=None, **kwargs):
+        if not obj:
+            self.form = self.add_form
+        else:
+            self.form = self.change_form
+
+        return super(SupplyAdmin, self).get_form(request, obj, **kwargs)
 
 
 admin.site.site_header = "Panel Administrativo - COSECHA"
 
 
 class PublishAdmin(admin.ModelAdmin):
-    list_display = ('user', 'supplies', 'unit_price','weight_unit', 'harvest_date',
-                    'is_sold',"test")
+    list_display = ('user', 'supplies', 'unit_price', 'weight_unit', 'harvest_date',
+                    'is_sold', "test")
 
-    list_filter = ('supplies', 'is_sold')
-
+    list_filter = (('unit_price', SliderNumericFilter), 'is_sold')
 
     def test(self, obj):
         return obj.user.district
-    test.short_description = 'User'
+
+    test.short_description = 'DISTRICT'
     test.admin_order_field = 'user__district'
+    ordering = ('is_sold', 'supplies')
+
+    search_fields = ('user__district__name', 'user__district__region__name', 'user__district__department__name',
+                     'supplies__name')
+
+
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('user', 'supplies', 'unit_price', 'weight_unit', 'desired_harvest_date',
+                    'is_solved', "test")
+
+    list_filter = (('unit_price', SliderNumericFilter), 'is_solved')
+
+    def test(self, obj):
+        return obj.user.district
+
+    test.short_description = 'DISTRICT'
+    test.admin_order_field = 'user__district'
+    search_fields = (
+    'user__district__name', 'user__district__region__name', 'user__district__department__name', 'supplies__name')
+    ordering = ('is_solved', 'supplies')
+
 
 # Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)
-# ... and, since we're not using Django's built-in permissions,
-# unregister the Group model from admin.
 admin.site.unregister(Group)
-admin.site.register(Supply)
+admin.site.register(Supply, SupplyAdmin)
 admin.site.register(Publish, PublishAdmin)
-admin.site.register(Order)
-#admin.site.register(Advertisement)
-#admin.site.register(AddressedTo)
+admin.site.register(Order, OrderAdmin)
+# admin.site.register(Advertisement)
+# admin.site.register(AddressedTo)
 
 # admin.site.register(Department)
 # admin.site.register(Region)
