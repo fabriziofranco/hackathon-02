@@ -128,15 +128,29 @@ class Supply(models.Model):
 
 class Advertisement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    supply = models.ForeignKey(Supply, on_delete=models.CASCADE)
-    reach = models.IntegerField()
-    harvest_date = models.DateTimeField()
-    sowing_date = models.DateTimeField()
+    remaining_credits = models.IntegerField(blank=False, null=False)
+
+    region = models.ForeignKey(Region, related_name='advertisements', on_delete=models.CASCADE, blank=True, null=True)
+    department = models.ForeignKey(Department, related_name='advertisements', on_delete=models.CASCADE, blank=True,
+                                   null=True)
+    district = models.ForeignKey(District, related_name='advertisements', on_delete=models.CASCADE, blank=True,
+                                 null=True)
+
+    for_orders = models.BooleanField(default=True)
+    for_publications = models.BooleanField(default=True)
+
+    picture_URLs = ArrayField(models.URLField(null=True, blank=True), blank=True, null=True)
+    # No estoy seguro de si ponerle false o true a que nulls/blanks o solo hacer una verificacion en el javascript donde la plataforma
+
+    beginning_sowing_date = models.DateTimeField(blank=True, null=True)
+    ending_sowing_date = models.DateTimeField(blank=True, null=True)
+    beginning_harvest_date = models.DateTimeField(blank=True, null=True)
+    ending_harvest_date = models.DateTimeField(blank=True, null=True)
 
 
-class AddressedTo(models.Model):
-    advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE)
-    district = models.ForeignKey(District, on_delete=models.CASCADE)
+class LinkedTo(models.Model):
+    advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE, default=None)
+    supply = models.ForeignKey(Supply, on_delete=models.CASCADE, default=None)
 
 
 WEIGHT_UNITS = [

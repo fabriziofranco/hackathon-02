@@ -15,7 +15,7 @@ from rest_framework.response import Response
 import environ
 from twilio import base
 from twilio.rest import Client
-from agricultores.models import Department, Region, District, Supply, Advertisement, AddressedTo, Publish, Order, User
+from agricultores.models import Department, Region, District, Supply, Advertisement, LinkedTo, Publish, Order, User
 from agricultores.serializers import UserSerializer, DepartmentSerializer, RegionSerializer, DistrictSerializer, \
     SuppliesSerializer, AdvertisementSerializer, AdressedToSerializer, PublishSerializer, OrderSerializer
 from rest_framework import generics
@@ -287,7 +287,7 @@ class AddressedToViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = AddressedTo.objects.all().order_by('id')
+    queryset = LinkedTo.objects.all().order_by('id')
     serializer_class = AdressedToSerializer
     pagination_class = None
     permission_classes = [permissions.IsAdminUser]
