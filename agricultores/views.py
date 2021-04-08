@@ -1,7 +1,9 @@
+import json
 import os
 import datetime
 from io import BytesIO
 import twilio
+from django.db.models import F
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, status
 from rest_framework import permissions
@@ -40,7 +42,8 @@ class PublishFilterView(generics.ListAPIView):
         temp = Publish.objects.filter(unit_price__gte=min_price,
                                       unit_price__lte=max_price,
                                       harvest_date__gte=min_date,
-                                      harvest_date__lte=max_date)
+                                      harvest_date__lte=max_date,
+                                      is_sold=False)
         if supply_id != 0:
             temp = temp.filter(supplies=supply_id)
         if department_id != 0:
@@ -66,7 +69,8 @@ class OrderFilterView(generics.ListAPIView):
         temp = Order.objects.filter(unit_price__gte=min_price,
                                     unit_price__lte=max_price,
                                     desired_harvest_date__gte=min_date,
-                                    desired_harvest_date__lte=max_date)
+                                    desired_harvest_date__lte=max_date,
+                                    is_solved=False)
         if supply_id != 0:
             temp = temp.filter(supplies=supply_id)
         if department_id != 0:
@@ -158,6 +162,36 @@ class DistrictFilterView(generics.ListAPIView):
     def get_queryset(self):
         region_id = self.request.query_params.get('region', '')
         return District.objects.filter(region=region_id)
+
+
+class SellPublicationView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request):
+        try:
+            supply_name = request.data.get('name')
+
+            Supply.objects.filter(name=supply_name).update(sold_publications=F('sold_publications') + 1,
+                                                           unsold_publications=F('unsold_publications') - 1)
+
+            return HttpResponse('Updated correctly.', status=200)
+        except Exception as e:
+            return HttpResponse('Internal error.', status=400)
+
+
+class SolveOrderView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request):
+        try:
+            supply_name = request.data.get('name')
+
+            Supply.objects.filter(name=supply_name).update(solved_orders=F('solved_orders') + 1,
+                                                           unsolved_orders=F('unsolved_orders') - 1)
+
+            return HttpResponse('Updated correctly.', status=200)
+        except Exception as e:
+            return HttpResponse('Internal error.', status=400)
 
 
 class ActionBasedPermission(AllowAny):
@@ -426,6 +460,39 @@ class UploadPubPicture(APIView):
         })
 
 
+class DeletePubPicture(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, **kwargs):
+        try:
+
+            id_cultivo = self.kwargs['id']
+            list_of_urls_to_delete = request.data['picture_URLs']
+
+            # organize a path for the file in bucket
+            file_directory_within_bucket = 'pub_pictures/'
+
+            media_storage = MediaStorage()
+
+            pub = Publish.objects.get(id=id_cultivo, user_id=request.user.id)
+
+            for url in list_of_urls_to_delete:
+                file_path_within_bucket = os.path.join(
+                    file_directory_within_bucket,
+                    url.rsplit('/', 1)[-1]
+                )
+                print(file_path_within_bucket)
+                media_storage.delete(file_path_within_bucket)
+                pub.picture_URLs.remove(url)
+
+            pub.save()
+
+            return HttpResponse('Elementos eliminados correctamente.', status=204)
+
+        except Exception as e:
+            return HttpResponse('Internal error.', status=400)
+
+
 class ChangeUserUbigeo(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -580,3 +647,6 @@ class GetMyFeaturedOrder(generics.ListCreateAPIView):
     def get_queryset(self):
         user = self.request.user
         return Order.objects.filter(user=user).order_by("-pk")[:4]
+
+# class updatePublish(generics.ListCreateAPIView):
+#

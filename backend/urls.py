@@ -45,6 +45,7 @@ urlpatterns = [
     path('api/filter/', include('agricultores.api_urls')),
     path('uploadProfilePicture/', views.UploadProfilePicture.as_view()),
     re_path(r'uploadPubPicture/(?P<id>\d+)/', views.UploadPubPicture.as_view()),
+    re_path(r'detetePubPicture/(?P<id>\d+)/', views.DeletePubPicture.as_view()),
     path('updateUbigeo/', views.ChangeUserUbigeo.as_view()),
     path('updateRol/', views.ChangeUserRol.as_view()),
     path('myInfo/', views.GetUserData.as_view()),
@@ -58,5 +59,7 @@ urlpatterns = [
     re_path(r'myOrder/(?P<id>\d+)/', views.GetMyOrderByID.as_view()),
     path('myProspects/', views.GetMyProspects.as_view()),
     path('mySuggestions/', views.GetMySuggestions.as_view()),
+    path('sellPublication/', views.SellPublicationView.as_view()),
+    path('solveOrder/', views.SolveOrderView.as_view())
     #  path('createOrder/', views.CreateMyOrder.as_view()),
 ]

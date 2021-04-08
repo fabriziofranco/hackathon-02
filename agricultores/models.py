@@ -29,7 +29,7 @@ class District(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}" + ", " + f"{self.region}" + ", " + f"{self.department}"
 
 
 class UserManager(BaseUserManager):
@@ -104,12 +104,26 @@ class User(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+    class Meta:
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
+
 
 class Supply(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, null=False, blank=False)
+    sold_publications = models.IntegerField(default=0)
+    unsold_publications = models.IntegerField(default=0)
+    solved_orders = models.IntegerField(default=0)
+    unsolved_orders = models.IntegerField(default=0)
+    days_for_harvest = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Insumo'
+        verbose_name_plural = 'Insumos'
+        ordering = ["name"]
 
 
 class Advertisement(models.Model):
@@ -145,15 +159,31 @@ class Order(models.Model):
     area = models.FloatField()
     desired_harvest_date = models.DateTimeField()
     desired_sowing_date = models.DateTimeField()
+    is_solved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.supplies}"
+
+    class Meta:
+        verbose_name = 'Pedido'
+        verbose_name_plural = 'Pedidos'
 
 
 class Publish(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     supplies = models.ForeignKey(Supply, on_delete=models.CASCADE)
     weight_unit = models.CharField(max_length=3, choices=WEIGHT_UNITS)
-    unit_price = models.FloatField()
+    unit_price = models.FloatField(null=True, blank=True)
     area_unit = models.CharField(max_length=3, choices=AREA_UNITS)
     area = models.FloatField()
     harvest_date = models.DateTimeField()
     sowing_date = models.DateTimeField()
     picture_URLs = ArrayField(models.URLField(null=True, blank=True), blank=True)
+    is_sold = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.supplies}"
+
+    class Meta:
+        verbose_name = 'Cultivo'
+        verbose_name_plural = 'Cultivos'
