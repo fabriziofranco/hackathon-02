@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.fields import CharField
 
-from agricultores.models import Department, District, Region, Supply, Advertisement, AddressedTo, Publish, Order
+from agricultores.models import Department, District, Region, Supply, Advertisement, LinkedTo, Publish, Order
 
 
 class RelatedFieldAlternative(serializers.PrimaryKeyRelatedField):
@@ -100,7 +100,7 @@ class AdvertisementSerializer(serializers.ModelSerializer):
 
 class AdressedToSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AddressedTo
+        model = LinkedTo
         fields = '__all__'
 
 
