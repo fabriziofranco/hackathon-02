@@ -62,5 +62,6 @@ urlpatterns = [
     path('sellPublication/', views.SellPublicationView.as_view()),
     path('solveOrder/', views.SolveOrderView.as_view()),
     path('postAd/', views.PostAd.as_view()),
+    path('estimatePublic/', views.EstimatePublic.as_view()),
     #  path('createOrder/', views.CreateMyOrder.as_view()),
 ]

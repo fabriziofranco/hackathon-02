@@ -24,6 +24,7 @@ from urllib.parse import urljoin, urlparse
 from PIL import Image, ExifTags
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from datetime import datetime
+from datetime import date
 import secrets
 
 
@@ -35,8 +36,8 @@ class PublishFilterView(generics.ListAPIView):
         supply_id = self.request.query_params.get('supply', 0)
         min_price = self.request.query_params.get('min_price', float('-inf'))
         max_price = self.request.query_params.get('max_price', float('inf'))
-        min_date = self.request.query_params.get('min_date', datetime.date.min)
-        max_date = self.request.query_params.get('max_date', datetime.date.max)
+        min_date = self.request.query_params.get('min_date', date.min)
+        max_date = self.request.query_params.get('max_date', date.max)
         department_id = self.request.query_params.get('department', 0)
         region_id = self.request.query_params.get('region', 0)
 
@@ -62,8 +63,8 @@ class OrderFilterView(generics.ListAPIView):
         supply_id = self.request.query_params.get('supply', 0)
         min_price = self.request.query_params.get('min_price', float('-inf'))
         max_price = self.request.query_params.get('max_price', float('inf'))
-        min_date = self.request.query_params.get('min_date', datetime.date.min)
-        max_date = self.request.query_params.get('max_date', datetime.date.max)
+        min_date = self.request.query_params.get('min_date', date.min)
+        max_date = self.request.query_params.get('max_date', date.max)
         department_id = self.request.query_params.get('department', 0)
         region_id = self.request.query_params.get('region', 0)
 
@@ -660,7 +661,7 @@ class PostAd(generics.ListCreateAPIView):
             picture_URLs = []
 
             beginning_sowing_date = datetime.strptime(request.data.get('beginning_sowing_date'), '%d/%m/%y '
-                                                                                                      '%H:%M:%S')
+                                                                                                 '%H:%M:%S')
             print(beginning_sowing_date)
 
             if beginning_sowing_date.year == 2020:
@@ -694,10 +695,83 @@ class PostAd(generics.ListCreateAPIView):
                                                   ending_harvest_date=ending_harvest_date)
 
             for supply_obj in request.data.get("supplies"):
-                LinkedTo.objects.create(supply=Supply.objects.filter(pk=supply_obj).first(),advertisement=ad_ojb)
+                LinkedTo.objects.create(supply=Supply.objects.filter(pk=supply_obj).first(), advertisement=ad_ojb)
             return HttpResponse('Created correctly.', status=200)
         except Exception as e:
             return HttpResponse('Internal error.', status=400)
+
+
+class EstimatePublic(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request):
+        total = 0
+
+        supplies_arr = request.data.get('supplies')
+
+        department_id = request.data.get('department_id')
+        region_id = request.data.get('region_id')
+        district_id = request.data.get('district_id')
+
+        for_orders = request.data.get('for_orders')
+        for_publications = request.data.get('for_publications')
+
+        beginning_sowing_date = datetime.strptime(request.data.get('beginning_sowing_date'), '%d/%m/%y '
+                                                                                             '%H:%M:%S')
+        ending_sowing_date = datetime.strptime(request.data.get('ending_sowing_date'), '%d/%m/%y %H:%M:%S')
+        beginning_harvest_date = datetime.strptime(request.data.get('beginning_harvest_date'), '%d/%m/%y %H:%M:%S')
+        ending_harvest_date = datetime.strptime(request.data.get('ending_harvest_date'), '%d/%m/%y %H:%M:%S')
+
+        if beginning_sowing_date.year == 2020:
+            beginning_sowing_date = date.min
+
+        if beginning_harvest_date.year == 2020:
+            beginning_harvest_date = date.min
+
+        if ending_sowing_date.year == 2020:
+            ending_sowing_date = date.max
+
+        if ending_harvest_date.year == 2020:
+            ending_harvest_date = date.max
+
+        if for_orders:
+            temp = Order.objects.filter(desired_harvest_date__gte=beginning_harvest_date,
+                                        desired_harvest_date__lte=ending_harvest_date,
+                                        desired_sowing_date__gte=beginning_sowing_date,
+                                        desired_sowing_date__lte=ending_sowing_date,
+                                        is_solved=False)
+
+            if supplies_arr:
+                temp = temp.filter(supplies__in=supplies_arr)
+            if department_id != 0:
+                temp = temp.filter(user__district__department__id=department_id)
+            if region_id != 0:
+                temp = temp.filter(user__district__region__id=region_id)
+            if district_id != 0:
+                temp = temp.filter(user__district__id=district_id)
+
+            total += len(temp)
+
+        if for_publications:
+            temp_2 = Publish.objects.filter(harvest_date__gte=beginning_harvest_date,
+                                            harvest_date__lte=ending_harvest_date,
+                                            sowing_date__gte=beginning_sowing_date,
+                                            sowing_date__lte=ending_sowing_date,
+                                            is_sold=False)
+
+            if supplies_arr:
+                temp_2 = temp_2.filter(supplies__in=supplies_arr)
+            if department_id != 0:
+                temp_2 = temp_2.filter(user__district__department__id=department_id)
+            if region_id != 0:
+                temp_2 = temp_2.filter(user__district__region__id=region_id)
+            if district_id != 0:
+                temp_2 = temp_2.filter(user__district__id=district_id)
+
+            total += len(temp_2)
+
+        return JsonResponse({
+            'total': total,
+        })
 
 
 class GetMyFeaturedPub(generics.ListCreateAPIView):
