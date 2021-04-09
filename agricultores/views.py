@@ -23,6 +23,7 @@ from backend.custom_storage import MediaStorage
 from urllib.parse import urljoin, urlparse
 from PIL import Image, ExifTags
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from datetime import datetime
 import secrets
 
 
@@ -627,6 +628,76 @@ class GetMyPub(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.validated_data['user'] = self.request.user
         return super(GetMyPub, self).perform_create(serializer)
+
+
+class PostAd(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = AdvertisementSerializer
+
+    def post(self, request):
+        try:
+
+            user = self.request.user
+
+            remaining_credits = request.data.get('remaining_credits')
+            if request.data.get('region_id') != 0:
+                region = Region.objects.filter(pk=request.data.get('region_id')).first()
+            else:
+                region = None
+
+            if request.data.get('department_id') != 0:
+                department = Department.objects.filter(pk=request.data.get('department_id')).first()
+            else:
+                department = None
+
+            if request.data.get('district_id') != 0:
+                district = District.objects.filter(pk=request.data.get('district_id')).first()
+            else:
+                district = None
+
+            for_orders = request.data.get('for_orders')
+            for_publications = request.data.get('for_publications')
+            picture_URLs = []
+
+            beginning_sowing_date = datetime.strptime(request.data.get('beginning_sowing_date'), '%d/%m/%y '
+                                                                                                      '%H:%M:%S')
+            print(beginning_sowing_date)
+
+            if beginning_sowing_date.year == 2020:
+                beginning_sowing_date = None
+
+            ending_sowing_date = datetime.strptime(request.data.get('ending_sowing_date'), '%d/%m/%y %H:%M:%S')
+
+            if ending_sowing_date.year == 2020:
+                ending_sowing_date = None
+
+            beginning_harvest_date = datetime.strptime(request.data.get('beginning_harvest_date'), '%d/%m/%y %H:%M:%S')
+
+            if beginning_harvest_date.year == 2020:
+                beginning_harvest_date = None
+
+            ending_harvest_date = datetime.strptime(request.data.get('ending_harvest_date'), '%d/%m/%y %H:%M:%S')
+
+            if ending_harvest_date.year == 2020:
+                ending_harvest_date = None
+            ad_ojb = Advertisement.objects.create(user=user,
+                                                  remaining_credits=remaining_credits,
+                                                  region=region,
+                                                  department=department,
+                                                  district=district,
+                                                  for_orders=for_orders,
+                                                  for_publications=for_publications,
+                                                  picture_URLs=picture_URLs,
+                                                  beginning_sowing_date=beginning_sowing_date,
+                                                  ending_sowing_date=ending_sowing_date,
+                                                  beginning_harvest_date=beginning_harvest_date,
+                                                  ending_harvest_date=ending_harvest_date)
+
+            for supply_obj in request.data.get("supplies"):
+                LinkedTo.objects.create(supply=Supply.objects.filter(pk=supply_obj).first(),advertisement=ad_ojb)
+            return HttpResponse('Created correctly.', status=200)
+        except Exception as e:
+            return HttpResponse('Internal error.', status=400)
 
 
 class GetMyFeaturedPub(generics.ListCreateAPIView):

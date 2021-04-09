@@ -140,7 +140,6 @@ class Advertisement(models.Model):
     for_publications = models.BooleanField(default=True)
 
     picture_URLs = ArrayField(models.URLField(null=True, blank=True), blank=True, null=True)
-    # No estoy seguro de si ponerle false o true a que nulls/blanks o solo hacer una verificacion en el javascript donde la plataforma
 
     beginning_sowing_date = models.DateTimeField(blank=True, null=True)
     ending_sowing_date = models.DateTimeField(blank=True, null=True)

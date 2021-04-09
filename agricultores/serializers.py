@@ -93,12 +93,17 @@ class SuppliesSerializer(serializers.ModelSerializer):
 
 
 class AdvertisementSerializer(serializers.ModelSerializer):
+    region = RegionSerializer()
+    department = DepartmentSerializer()
+    district = DistrictSerializer()
     class Meta:
         model = Advertisement
         fields = '__all__'
 
 
 class AdressedToSerializer(serializers.ModelSerializer):
+    advertisement = AdvertisementSerializer()
+    supply = SuppliesSerializer()
     class Meta:
         model = LinkedTo
         fields = '__all__'
