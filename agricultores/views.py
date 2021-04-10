@@ -1,6 +1,6 @@
 import json
 import os
-import datetime
+import datetime as dt
 from io import BytesIO
 import twilio
 from django.db.models import F
@@ -36,8 +36,8 @@ class PublishFilterView(generics.ListAPIView):
         supply_id = self.request.query_params.get('supply', 0)
         min_price = self.request.query_params.get('min_price', float('-inf'))
         max_price = self.request.query_params.get('max_price', float('inf'))
-        min_date = self.request.query_params.get('min_date', datetime.date.min)
-        max_date = self.request.query_params.get('max_date', datetime.date.max)
+        min_date = self.request.query_params.get('min_date', dt.date.min)
+        max_date = self.request.query_params.get('max_date', dt.date.max)
         department_id = self.request.query_params.get('department', 0)
         region_id = self.request.query_params.get('region', 0)
 
@@ -63,8 +63,8 @@ class OrderFilterView(generics.ListAPIView):
         supply_id = self.request.query_params.get('supply', 0)
         min_price = self.request.query_params.get('min_price', float('-inf'))
         max_price = self.request.query_params.get('max_price', float('inf'))
-        min_date = self.request.query_params.get('min_date', datetime.date.min)
-        max_date = self.request.query_params.get('max_date', datetime.date.max)
+        min_date = self.request.query_params.get('min_date', dt.date.min)
+        max_date = self.request.query_params.get('max_date', dt.date.max)
         department_id = self.request.query_params.get('department', 0)
         region_id = self.request.query_params.get('region', 0)
 
@@ -722,16 +722,16 @@ class EstimatePublic(generics.ListCreateAPIView):
         ending_harvest_date = datetime.strptime(request.data.get('ending_harvest_date'), '%d/%m/%y %H:%M:%S')
 
         if beginning_sowing_date.year == 2020:
-            beginning_sowing_date = datetime.date.min
+            beginning_sowing_date = dt.date.min
 
         if beginning_harvest_date.year == 2020:
-            beginning_harvest_date = datetime.date.min
+            beginning_harvest_date = dt.date.min
 
         if ending_sowing_date.year == 2020:
-            ending_sowing_date = datetime.date.max
+            ending_sowing_date = dt.date.max
 
         if ending_harvest_date.year == 2020:
-            ending_harvest_date = datetime.date.max
+            ending_harvest_date = dt.date.max
 
         if for_orders:
             temp = Order.objects.filter(desired_harvest_date__gte=beginning_harvest_date,
