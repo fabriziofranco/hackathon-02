@@ -703,6 +703,7 @@ class PostAd(generics.ListCreateAPIView):
 
 class EstimatePublic(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
+
     def get(self, request):
         total = 0
 
@@ -793,6 +794,7 @@ class GetMyFeaturedOrder(generics.ListCreateAPIView):
         user = self.request.user
         return Order.objects.filter(user=user).order_by("-pk")[:4]
 
+
 class GetMyAd(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = AdvertisementSerializer
@@ -802,9 +804,5 @@ class GetMyAd(generics.ListCreateAPIView):
         user = self.request.user
         return Advertisement.objects.filter(user=user)
 
-
-
 # class updatePublish(generics.ListCreateAPIView):
 #
-
-
