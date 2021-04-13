@@ -141,6 +141,7 @@ class Advertisement(models.Model):
 
     picture_URL = models.URLField(null=True, blank=True)
     URL = models.URLField(null=True, blank=True)
+    name = models.CharField(max_length=100, blank= True, null=False)
 
     beginning_sowing_date = models.DateTimeField(blank=True, null=True)
     ending_sowing_date = models.DateTimeField(blank=True, null=True)
