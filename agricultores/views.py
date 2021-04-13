@@ -26,6 +26,8 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from datetime import datetime
 from datetime import date
 import secrets
+from django.db.models import Q
+import random
 
 
 class PublishFilterView(generics.ListAPIView):
@@ -637,7 +639,6 @@ class PostAd(generics.ListCreateAPIView):
 
     def post(self, request):
         try:
-
             user = self.request.user
 
             remaining_credits = request.data.get('remaining_credits')
@@ -658,7 +659,8 @@ class PostAd(generics.ListCreateAPIView):
 
             for_orders = request.data.get('for_orders')
             for_publications = request.data.get('for_publications')
-            picture_URLs = []
+            picture_URL = request.data.get('picture_URL')
+            URL = request.data.get('URL')
 
             beginning_sowing_date = datetime.strptime(request.data.get('beginning_sowing_date'), '%d/%m/%y '
                                                                                                  '%H:%M:%S')
@@ -688,7 +690,8 @@ class PostAd(generics.ListCreateAPIView):
                                                   district=district,
                                                   for_orders=for_orders,
                                                   for_publications=for_publications,
-                                                  picture_URLs=picture_URLs,
+                                                  picture_URL=picture_URL,
+                                                  URL=URL,
                                                   beginning_sowing_date=beginning_sowing_date,
                                                   ending_sowing_date=ending_sowing_date,
                                                   beginning_harvest_date=beginning_harvest_date,
@@ -704,35 +707,21 @@ class PostAd(generics.ListCreateAPIView):
 class EstimatePublic(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request):
+    def get(self):
         total = 0
 
-        supplies_arr = request.data.get('supplies')
+        supplies_arr = self.request.query_params.get('supplies', [])
+        department_id = self.request.query_params.get('department_id', 0)
+        region_id = self.request.query_params.get('region_id', 0)
+        district_id = self.request.query_params.get('district_id', 0)
 
-        department_id = request.data.get('department_id')
-        region_id = request.data.get('region_id')
-        district_id = request.data.get('district_id')
+        for_orders = self.request.query_params.get('for_orders', True)
+        for_publications = self.request.query_params.get('for_publications', True)
 
-        for_orders = request.data.get('for_orders')
-        for_publications = request.data.get('for_publications')
-
-        beginning_sowing_date = datetime.strptime(request.data.get('beginning_sowing_date'), '%d/%m/%y '
-                                                                                             '%H:%M:%S')
-        ending_sowing_date = datetime.strptime(request.data.get('ending_sowing_date'), '%d/%m/%y %H:%M:%S')
-        beginning_harvest_date = datetime.strptime(request.data.get('beginning_harvest_date'), '%d/%m/%y %H:%M:%S')
-        ending_harvest_date = datetime.strptime(request.data.get('ending_harvest_date'), '%d/%m/%y %H:%M:%S')
-
-        if beginning_sowing_date.year == 2020:
-            beginning_sowing_date = dt.date.min
-
-        if beginning_harvest_date.year == 2020:
-            beginning_harvest_date = dt.date.min
-
-        if ending_sowing_date.year == 2020:
-            ending_sowing_date = dt.date.max
-
-        if ending_harvest_date.year == 2020:
-            ending_harvest_date = dt.date.max
+        beginning_sowing_date = self.request.query_params.get('beginning_sowing_date', dt.date.min)
+        ending_sowing_date = self.request.query_params.get('ending_sowing_date', dt.date.max)
+        beginning_harvest_date = self.request.query_params.get('beginning_harvest_date', dt.date.min)
+        ending_harvest_date = self.request.query_params.get('ending_harvest_date', dt.date.max)
 
         if for_orders:
             temp = Order.objects.filter(desired_harvest_date__gte=beginning_harvest_date,
@@ -804,5 +793,62 @@ class GetMyAd(generics.ListCreateAPIView):
         user = self.request.user
         return Advertisement.objects.filter(user=user)
 
+
 # class updatePublish(generics.ListCreateAPIView):
 #
+
+class GetAdForIt(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = AdvertisementSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        obj_id = self.request.query_params.get('id', 0)
+        obj_type = self.request.query_params.get('id', 'pub')  # type can be 'pub' and 'order'
+
+        if obj_type == 'pub':
+            pub_obj = Publish.objects.filter(id=obj_id).first()
+            linkedToObjects = LinkedTo.objects.filter(supply__id=pub_obj.supplies.id)
+            adIds = []
+            adObjects = []
+            for object in linkedToObjects:
+                adIds.append(object.advertisement.id)
+            adObjects = Advertisement.objects.filter(id__in=adIds, remaining_credits__gt=0, for_publications=True)
+            adObjects = adObjects.filter(Q(department=None) | Q(department__id=pub_obj.user.district.department.id))
+            adObjects = adObjects.filter(Q(region=None) | Q(region__id=pub_obj.user.district.region.id))
+            adObjects = adObjects.filter(Q(district=None) | Q(district__id=pub_obj.user.district.id))
+            adObjects = adObjects.filter(
+                Q(beginning_sowing_date=None) | Q(beginning_sowing_date__gte=pub_obj.sowing_date))
+            adObjects = adObjects.filter(Q(ending_sowing_date=None) | Q(ending_sowing_date__lte=pub_obj.sowing_date))
+            adObjects = adObjects.filter(
+                Q(beginning_harvest_date=None) | Q(beginning_harvest_date__gte=pub_obj.harvest_date))
+            adObjects = adObjects.filter(Q(ending_harvest_date=None) | Q(ending_harvest_date__lte=pub_obj.harvest_date))
+
+        elif obj_type == 'order':
+            order_obj = Order.objects.filter(id=obj_id).first()
+            linkedToObjects = LinkedTo.objects.filter(supply__id=order_obj.supplies.id)
+            adIds = []
+            adObjects = []
+            for object in linkedToObjects:
+                adIds.append(object.advertisement.id)
+            adObjects = Advertisement.objects.filter(id__in=adIds, remaining_credits__gt=0, for_publications=True)
+            adObjects = adObjects.filter(
+                Q(department=None) | Q(department__id=order_obj.user.district.department.id))
+            adObjects = adObjects.filter(Q(region=None) | Q(region__id=order_obj.user.district.region.id))
+            adObjects = adObjects.filter(Q(district=None) | Q(district__id=order_obj.user.district.id))
+            adObjects = adObjects.filter(
+                Q(beginning_sowing_date=None) | Q(beginning_sowing_date__gte=order_obj.desired_sowing_date))
+            adObjects = adObjects.filter(
+                Q(ending_sowing_date=None) | Q(ending_sowing_date__lte=order_obj.desired_sowing_date))
+            adObjects = adObjects.filter(
+                Q(beginning_harvest_date=None) | Q(beginning_harvest_date__gte=order_obj.desired_harvest_date))
+            adObjects = adObjects.filter(
+                Q(ending_harvest_date=None) | Q(ending_harvest_date__lte=order_obj.desired_harvest_date))
+
+        if adObjects:
+            it = random.choice(adObjects)
+            id_it = it.id
+            Advertisement.objects.filter(id=id_it).update(remaining_credits=F('remaining_credits') - 1)
+            return it
+        else:
+            return None
