@@ -639,7 +639,6 @@ class PostAd(generics.ListCreateAPIView):
 
     def post(self, request):
         try:
-
             user = self.request.user
 
             remaining_credits = request.data.get('remaining_credits')
@@ -660,7 +659,8 @@ class PostAd(generics.ListCreateAPIView):
 
             for_orders = request.data.get('for_orders')
             for_publications = request.data.get('for_publications')
-            picture_URLs = []
+            picture_URL = request.data.get('picture_URL')
+            URL = request.data.get('URL')
 
             beginning_sowing_date = datetime.strptime(request.data.get('beginning_sowing_date'), '%d/%m/%y '
                                                                                                  '%H:%M:%S')
@@ -690,7 +690,8 @@ class PostAd(generics.ListCreateAPIView):
                                                   district=district,
                                                   for_orders=for_orders,
                                                   for_publications=for_publications,
-                                                  picture_URLs=picture_URLs,
+                                                  picture_URL=picture_URL,
+                                                  URL=URL,
                                                   beginning_sowing_date=beginning_sowing_date,
                                                   ending_sowing_date=ending_sowing_date,
                                                   beginning_harvest_date=beginning_harvest_date,

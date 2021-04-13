@@ -139,7 +139,8 @@ class Advertisement(models.Model):
     for_orders = models.BooleanField(default=True)
     for_publications = models.BooleanField(default=True)
 
-    picture_URLs = ArrayField(models.URLField(null=True, blank=True), blank=True, null=True)
+    picture_URL = models.URLField(null=True, blank=True)
+    URL = models.URLField(null=True, blank=True)
 
     beginning_sowing_date = models.DateTimeField(blank=True, null=True)
     ending_sowing_date = models.DateTimeField(blank=True, null=True)
