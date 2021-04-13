@@ -714,7 +714,6 @@ class EstimatePublic(generics.ListCreateAPIView):
         department_id = self.request.query_params.get('department_id', 0)
         region_id = self.request.query_params.get('region_id', 0)
         district_id = self.request.query_params.get('district_id', 0)
-        print(supplies_arr)
         for_orders = self.request.query_params.get('for_orders', True)
         for_publications = self.request.query_params.get('for_publications', True)
 
