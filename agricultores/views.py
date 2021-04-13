@@ -707,14 +707,14 @@ class PostAd(generics.ListCreateAPIView):
 class EstimatePublic(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self):
+    def get(self,request):
         total = 0
 
-        supplies_arr = self.request.query_params.get('supplies', [])
+        supplies_arr = self.request.query_params.getlist('supplies', [])
         department_id = self.request.query_params.get('department_id', 0)
         region_id = self.request.query_params.get('region_id', 0)
         district_id = self.request.query_params.get('district_id', 0)
-
+        print(supplies_arr)
         for_orders = self.request.query_params.get('for_orders', True)
         for_publications = self.request.query_params.get('for_publications', True)
 
