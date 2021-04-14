@@ -807,20 +807,22 @@ class GetAdForIt(generics.ListCreateAPIView):
         if obj_type == 'pub':
             pub_obj = Publish.objects.filter(id=obj_id).first()
             linkedToObjects = LinkedTo.objects.filter(supply__id=pub_obj.supplies.id)
+            print(linkedToObjects)
             adIds = []
             adObjects = []
             for object in linkedToObjects:
                 adIds.append(object.advertisement.id)
-            adObjects = Advertisement.objects.filter(id__in=adIds, remaining_credits__gt=0, for_publications=True)
-            adObjects = adObjects.filter(Q(department=None) | Q(department__id=pub_obj.user.district.department.id))
-            adObjects = adObjects.filter(Q(region=None) | Q(region__id=pub_obj.user.district.region.id))
-            adObjects = adObjects.filter(Q(district=None) | Q(district__id=pub_obj.user.district.id))
-            adObjects = adObjects.filter(
-                Q(beginning_sowing_date=None) | Q(beginning_sowing_date__gte=pub_obj.sowing_date))
-            adObjects = adObjects.filter(Q(ending_sowing_date=None) | Q(ending_sowing_date__lte=pub_obj.sowing_date))
-            adObjects = adObjects.filter(
-                Q(beginning_harvest_date=None) | Q(beginning_harvest_date__gte=pub_obj.harvest_date))
-            adObjects = adObjects.filter(Q(ending_harvest_date=None) | Q(ending_harvest_date__lte=pub_obj.harvest_date))
+            if adIds:
+                adObjects = Advertisement.objects.filter(id__in=adIds, remaining_credits__gt=0, for_publications=True)
+                adObjects = adObjects.filter(Q(department=None) | Q(department__id=pub_obj.user.district.department.id))
+                adObjects = adObjects.filter(Q(region=None) | Q(region__id=pub_obj.user.district.region.id))
+                adObjects = adObjects.filter(Q(district=None) | Q(district__id=pub_obj.user.district.id))
+                adObjects = adObjects.filter(
+                    Q(beginning_sowing_date=None) | Q(beginning_sowing_date__gte=pub_obj.sowing_date))
+                adObjects = adObjects.filter(Q(ending_sowing_date=None) | Q(ending_sowing_date__lte=pub_obj.sowing_date))
+                adObjects = adObjects.filter(
+                    Q(beginning_harvest_date=None) | Q(beginning_harvest_date__gte=pub_obj.harvest_date))
+                adObjects = adObjects.filter(Q(ending_harvest_date=None) | Q(ending_harvest_date__lte=pub_obj.harvest_date))
 
         elif obj_type == 'order':
             order_obj = Order.objects.filter(id=obj_id).first()
@@ -829,20 +831,20 @@ class GetAdForIt(generics.ListCreateAPIView):
             adObjects = []
             for object in linkedToObjects:
                 adIds.append(object.advertisement.id)
-            adObjects = Advertisement.objects.filter(id__in=adIds, remaining_credits__gt=0, for_publications=True)
-            adObjects = adObjects.filter(
-                Q(department=None) | Q(department__id=order_obj.user.district.department.id))
-            adObjects = adObjects.filter(Q(region=None) | Q(region__id=order_obj.user.district.region.id))
-            adObjects = adObjects.filter(Q(district=None) | Q(district__id=order_obj.user.district.id))
-            adObjects = adObjects.filter(
-                Q(beginning_sowing_date=None) | Q(beginning_sowing_date__gte=order_obj.desired_sowing_date))
-            adObjects = adObjects.filter(
-                Q(ending_sowing_date=None) | Q(ending_sowing_date__lte=order_obj.desired_sowing_date))
-            adObjects = adObjects.filter(
-                Q(beginning_harvest_date=None) | Q(beginning_harvest_date__gte=order_obj.desired_harvest_date))
-            adObjects = adObjects.filter(
-                Q(ending_harvest_date=None) | Q(ending_harvest_date__lte=order_obj.desired_harvest_date))
-
+            if adIds:
+                adObjects = Advertisement.objects.filter(id__in=adIds, remaining_credits__gt=0, for_publications=True)
+                adObjects = adObjects.filter(
+                    Q(department=None) | Q(department__id=order_obj.user.district.department.id))
+                adObjects = adObjects.filter(Q(region=None) | Q(region__id=order_obj.user.district.region.id))
+                adObjects = adObjects.filter(Q(district=None) | Q(district__id=order_obj.user.district.id))
+                adObjects = adObjects.filter(
+                    Q(beginning_sowing_date=None) | Q(beginning_sowing_date__gte=order_obj.desired_sowing_date))
+                adObjects = adObjects.filter(
+                    Q(ending_sowing_date=None) | Q(ending_sowing_date__lte=order_obj.desired_sowing_date))
+                adObjects = adObjects.filter(
+                    Q(beginning_harvest_date=None) | Q(beginning_harvest_date__gte=order_obj.desired_harvest_date))
+                adObjects = adObjects.filter(
+                    Q(ending_harvest_date=None) | Q(ending_harvest_date__lte=order_obj.desired_harvest_date))
         if adObjects:
             it = random.choice(adObjects)
             id_it = it.id
