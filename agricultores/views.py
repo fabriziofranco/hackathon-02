@@ -803,7 +803,7 @@ class GetAdForIt(generics.ListCreateAPIView):
 
     def get_queryset(self):
         obj_id = self.request.query_params.get('id', 0)
-        obj_type = self.request.query_params.get('id', 'pub')  # type can be 'pub' and 'order'
+        obj_type = self.request.query_params.get('type', 'pub')  # type can be 'pub' and 'order'
 
         if obj_type == 'pub':
             pub_obj = Publish.objects.filter(id=obj_id).first()
