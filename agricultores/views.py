@@ -707,7 +707,7 @@ class PostAd(generics.ListCreateAPIView):
 class EstimatePublic(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self,request):
+    def get(self, request):
         total = 0
 
         supplies_arr = self.request.query_params.getlist('supplies', [])
@@ -798,10 +798,9 @@ class GetMyAd(generics.ListCreateAPIView):
 
 class GetAdForIt(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = AdvertisementSerializer
     pagination_class = None
 
-    def get_queryset(self):
+    def get(self, request):
         obj_id = self.request.query_params.get('id', 0)
         obj_type = self.request.query_params.get('type', 'pub')  # type can be 'pub' and 'order'
 
@@ -848,6 +847,12 @@ class GetAdForIt(generics.ListCreateAPIView):
             it = random.choice(adObjects)
             id_it = it.id
             Advertisement.objects.filter(id=id_it).update(remaining_credits=F('remaining_credits') - 1)
-            return it
+            return JsonResponse({
+                'data': True,
+                'URL': it.URL,
+                'picture_URL': it.picture_URL,
+            })
         else:
-            return None
+            return JsonResponse({
+                'data': False,
+            })
