@@ -895,6 +895,8 @@ class PostUserFromWeb(generics.ListCreateAPIView):
             first_name = request.data.get('first_name')
             last_name = request.data.get('last_name')
             phone_number = request.data.get('phone_number')
+            if get_user_model().objects.filter(phone_number=phone_number):
+                return HttpResponse(json.dumps({"message": "Teléfono ya registrado"}), status=400, content_type="application/json")
             password = request.data.get('password')
             DNI = request.data.get('DNI')
             RUC = request.data.get('RUC')
