@@ -690,18 +690,42 @@ class PostAd(generics.ListCreateAPIView):
                                                   district=district,
                                                   for_orders=for_orders,
                                                   for_publications=for_publications,
-                                                  picture_URL=picture_URL,
                                                   URL=URL,
                                                   beginning_sowing_date=beginning_sowing_date,
                                                   ending_sowing_date=ending_sowing_date,
                                                   beginning_harvest_date=beginning_harvest_date,
                                                   ending_harvest_date=ending_harvest_date)
-
-            for supply_obj in request.data.get("supplies"):
+            for supply_obj in request.data.getlist("supplies"):
                 LinkedTo.objects.create(supply=Supply.objects.filter(pk=supply_obj).first(), advertisement=ad_ojb)
+
+            file_obj = request.FILES.get('file', '')
+            img = Image.open(file_obj)
+            img.thumbnail((500,500),Image.ANTIALIAS)
+            thumb_io = BytesIO()
+            img.save(thumb_io, format='JPEG')
+            image_file = InMemoryUploadedFile(thumb_io, None, str(file_obj.name) + '.jpg', 'image/jpeg', thumb_io.tell,
+                                              None)
+
+            # organize a path for the file in bucket
+            file_directory_within_bucket = 'ad_pictures/'
+
+            # synthesize a full file path; note that we included the filename
+            file_path_within_bucket = os.path.join(
+                file_directory_within_bucket,
+                str(ad_ojb.id)
+            )
+
+            media_storage = MediaStorage()
+
+            media_storage.save(file_path_within_bucket, image_file)
+            file_url = media_storage.url(file_path_within_bucket)
+            no_params_url = urljoin(file_url, urlparse(file_url).path)
+            ad_ojb.picture_URL = no_params_url
+            ad_ojb.save()
+
             return HttpResponse('Created correctly.', status=200)
         except Exception as e:
-            return HttpResponse('Internal error.', status=400)
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
 
 
 class EstimatePublic(generics.ListCreateAPIView):
@@ -886,8 +910,8 @@ class PostUserFromWeb(generics.ListCreateAPIView):
                                                    district=district_obj)
 
             file_obj = request.FILES.get('file', '')
-            #if file_obj == '':
-                # Compressing Image and Preventing Rotation
+            # if file_obj == '':
+            # Compressing Image and Preventing Rotation
             img = Image.open(file_obj)
             get_exif_info = img._getexif()
             if get_exif_info:
