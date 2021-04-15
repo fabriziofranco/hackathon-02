@@ -1,6 +1,9 @@
 # ENV
 backend/.env
 
+# vscode
+.vscode
+
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,linux,django,python,pycharm
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,linux,django,python,pycharm

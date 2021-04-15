@@ -1,6 +1,6 @@
 import json
 import os
-import datetime
+import datetime as dt
 from io import BytesIO
 import twilio
 from django.db.models import F
@@ -15,7 +15,7 @@ from rest_framework.response import Response
 import environ
 from twilio import base
 from twilio.rest import Client
-from agricultores.models import Department, Region, District, Supply, Advertisement, AddressedTo, Publish, Order, User
+from agricultores.models import Department, Region, District, Supply, Advertisement, LinkedTo, Publish, Order, User
 from agricultores.serializers import UserSerializer, DepartmentSerializer, RegionSerializer, DistrictSerializer, \
     SuppliesSerializer, AdvertisementSerializer, AdressedToSerializer, PublishSerializer, OrderSerializer
 from rest_framework import generics
@@ -23,7 +23,11 @@ from backend.custom_storage import MediaStorage
 from urllib.parse import urljoin, urlparse
 from PIL import Image, ExifTags
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from datetime import datetime
+from datetime import date
 import secrets
+from django.db.models import Q
+import random
 
 
 class PublishFilterView(generics.ListAPIView):
@@ -34,8 +38,8 @@ class PublishFilterView(generics.ListAPIView):
         supply_id = self.request.query_params.get('supply', 0)
         min_price = self.request.query_params.get('min_price', float('-inf'))
         max_price = self.request.query_params.get('max_price', float('inf'))
-        min_date = self.request.query_params.get('min_date', datetime.date.min)
-        max_date = self.request.query_params.get('max_date', datetime.date.max)
+        min_date = self.request.query_params.get('min_date', dt.date.min)
+        max_date = self.request.query_params.get('max_date', dt.date.max)
         department_id = self.request.query_params.get('department', 0)
         region_id = self.request.query_params.get('region', 0)
 
@@ -61,8 +65,8 @@ class OrderFilterView(generics.ListAPIView):
         supply_id = self.request.query_params.get('supply', 0)
         min_price = self.request.query_params.get('min_price', float('-inf'))
         max_price = self.request.query_params.get('max_price', float('inf'))
-        min_date = self.request.query_params.get('min_date', datetime.date.min)
-        max_date = self.request.query_params.get('max_date', datetime.date.max)
+        min_date = self.request.query_params.get('min_date', dt.date.min)
+        max_date = self.request.query_params.get('max_date', dt.date.max)
         department_id = self.request.query_params.get('department', 0)
         region_id = self.request.query_params.get('region', 0)
 
@@ -287,7 +291,7 @@ class AddressedToViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = AddressedTo.objects.all().order_by('id')
+    queryset = LinkedTo.objects.all().order_by('id')
     serializer_class = AdressedToSerializer
     pagination_class = None
     permission_classes = [permissions.IsAdminUser]
@@ -565,7 +569,7 @@ class GetMyOrder(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Order.objects.filter(user=user)
+        return Order.objects.filter(user=user).order_by('is_solved')
 
     def perform_create(self, serializer):
         serializer.validated_data['user'] = self.request.user
@@ -622,11 +626,165 @@ class GetMyPub(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Publish.objects.filter(user=user)
+        return Publish.objects.filter(user=user).order_by('is_sold')
 
     def perform_create(self, serializer):
         serializer.validated_data['user'] = self.request.user
         return super(GetMyPub, self).perform_create(serializer)
+
+
+class PostAd(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = AdvertisementSerializer
+
+    def post(self, request):
+        try:
+            user = self.request.user
+
+            remaining_credits = request.data.get('remaining_credits')
+            if request.data.get('region_id') != 0:
+                region = Region.objects.filter(pk=request.data.get('region_id')).first()
+            else:
+                region = None
+
+            if request.data.get('department_id') != 0:
+                department = Department.objects.filter(pk=request.data.get('department_id')).first()
+            else:
+                department = None
+
+            if request.data.get('district_id') != 0:
+                district = District.objects.filter(pk=request.data.get('district_id')).first()
+            else:
+                district = None
+
+            for_orders = request.data.get('for_orders')
+            for_publications = request.data.get('for_publications')
+            picture_URL = request.data.get('picture_URL')
+            URL = request.data.get('URL')
+
+            beginning_sowing_date = datetime.strptime(request.data.get('beginning_sowing_date'), '%d/%m/%y '
+                                                                                                 '%H:%M:%S')
+            print(beginning_sowing_date)
+
+            if beginning_sowing_date.year == 2020:
+                beginning_sowing_date = None
+
+            ending_sowing_date = datetime.strptime(request.data.get('ending_sowing_date'), '%d/%m/%y %H:%M:%S')
+
+            if ending_sowing_date.year == 2020:
+                ending_sowing_date = None
+
+            beginning_harvest_date = datetime.strptime(request.data.get('beginning_harvest_date'), '%d/%m/%y %H:%M:%S')
+
+            if beginning_harvest_date.year == 2020:
+                beginning_harvest_date = None
+
+            ending_harvest_date = datetime.strptime(request.data.get('ending_harvest_date'), '%d/%m/%y %H:%M:%S')
+
+            if ending_harvest_date.year == 2020:
+                ending_harvest_date = None
+            ad_ojb = Advertisement.objects.create(user=user,
+                                                  remaining_credits=remaining_credits,
+                                                  region=region,
+                                                  department=department,
+                                                  district=district,
+                                                  for_orders=for_orders,
+                                                  for_publications=for_publications,
+                                                  URL=URL,
+                                                  beginning_sowing_date=beginning_sowing_date,
+                                                  ending_sowing_date=ending_sowing_date,
+                                                  beginning_harvest_date=beginning_harvest_date,
+                                                  ending_harvest_date=ending_harvest_date)
+            for supply_obj in request.data.getlist("supplies"):
+                LinkedTo.objects.create(supply=Supply.objects.filter(pk=supply_obj).first(), advertisement=ad_ojb)
+
+            file_obj = request.FILES.get('file', '')
+            img = Image.open(file_obj)
+            img.thumbnail((500,500),Image.ANTIALIAS)
+            thumb_io = BytesIO()
+            img.save(thumb_io, format='JPEG')
+            image_file = InMemoryUploadedFile(thumb_io, None, str(file_obj.name) + '.jpg', 'image/jpeg', thumb_io.tell,
+                                              None)
+
+            # organize a path for the file in bucket
+            file_directory_within_bucket = 'ad_pictures/'
+
+            # synthesize a full file path; note that we included the filename
+            file_path_within_bucket = os.path.join(
+                file_directory_within_bucket,
+                str(ad_ojb.id)
+            )
+
+            media_storage = MediaStorage()
+
+            media_storage.save(file_path_within_bucket, image_file)
+            file_url = media_storage.url(file_path_within_bucket)
+            no_params_url = urljoin(file_url, urlparse(file_url).path)
+            ad_ojb.picture_URL = no_params_url
+            ad_ojb.save()
+
+            return HttpResponse('Created correctly.', status=200)
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
+
+
+class EstimatePublic(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        total = 0
+
+        supplies_arr = self.request.query_params.getlist('supplies', [])
+        department_id = self.request.query_params.get('department_id', 0)
+        region_id = self.request.query_params.get('region_id', 0)
+        district_id = self.request.query_params.get('district_id', 0)
+        for_orders = self.request.query_params.get('for_orders', True)
+        for_publications = self.request.query_params.get('for_publications', True)
+
+        beginning_sowing_date = self.request.query_params.get('beginning_sowing_date', dt.date.min)
+        ending_sowing_date = self.request.query_params.get('ending_sowing_date', dt.date.max)
+        beginning_harvest_date = self.request.query_params.get('beginning_harvest_date', dt.date.min)
+        ending_harvest_date = self.request.query_params.get('ending_harvest_date', dt.date.max)
+
+        if for_orders:
+            temp = Order.objects.filter(desired_harvest_date__gte=beginning_harvest_date,
+                                        desired_harvest_date__lte=ending_harvest_date,
+                                        desired_sowing_date__gte=beginning_sowing_date,
+                                        desired_sowing_date__lte=ending_sowing_date,
+                                        is_solved=False)
+
+            if supplies_arr:
+                temp = temp.filter(supplies__in=supplies_arr)
+            if department_id != 0:
+                temp = temp.filter(user__district__department__id=department_id)
+            if region_id != 0:
+                temp = temp.filter(user__district__region__id=region_id)
+            if district_id != 0:
+                temp = temp.filter(user__district__id=district_id)
+
+            total += len(temp)
+
+        if for_publications:
+            temp_2 = Publish.objects.filter(harvest_date__gte=beginning_harvest_date,
+                                            harvest_date__lte=ending_harvest_date,
+                                            sowing_date__gte=beginning_sowing_date,
+                                            sowing_date__lte=ending_sowing_date,
+                                            is_sold=False)
+
+            if supplies_arr:
+                temp_2 = temp_2.filter(supplies__in=supplies_arr)
+            if department_id != 0:
+                temp_2 = temp_2.filter(user__district__department__id=department_id)
+            if region_id != 0:
+                temp_2 = temp_2.filter(user__district__region__id=region_id)
+            if district_id != 0:
+                temp_2 = temp_2.filter(user__district__id=district_id)
+
+            total += len(temp_2)
+
+        return JsonResponse({
+            'total': total,
+        })
 
 
 class GetMyFeaturedPub(generics.ListCreateAPIView):
@@ -648,5 +806,148 @@ class GetMyFeaturedOrder(generics.ListCreateAPIView):
         user = self.request.user
         return Order.objects.filter(user=user).order_by("-pk")[:4]
 
+
+class GetMyAd(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = AdvertisementSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        user = self.request.user
+        return Advertisement.objects.filter(user=user)
+
+
 # class updatePublish(generics.ListCreateAPIView):
 #
+
+class GetAdForIt(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
+
+    def get(self, request):
+        obj_id = self.request.query_params.get('id', 0)
+        obj_type = self.request.query_params.get('type', 'pub')  # type can be 'pub' and 'order'
+
+        if obj_type == 'pub':
+            pub_obj = Publish.objects.filter(id=obj_id).first()
+            linkedToObjects = LinkedTo.objects.filter(supply__id=pub_obj.supplies.id)
+            print(linkedToObjects)
+            adIds = []
+            adObjects = []
+            for object in linkedToObjects:
+                adIds.append(object.advertisement.id)
+            if adIds:
+                adObjects = Advertisement.objects.filter(id__in=adIds, remaining_credits__gt=0, for_publications=True)
+                adObjects = adObjects.filter(Q(department=None) | Q(department__id=pub_obj.user.district.department.id))
+                adObjects = adObjects.filter(Q(region=None) | Q(region__id=pub_obj.user.district.region.id))
+                adObjects = adObjects.filter(Q(district=None) | Q(district__id=pub_obj.user.district.id))
+                adObjects = adObjects.filter(
+                    Q(beginning_sowing_date=None) | Q(beginning_sowing_date__gte=pub_obj.sowing_date))
+                adObjects = adObjects.filter(
+                    Q(ending_sowing_date=None) | Q(ending_sowing_date__lte=pub_obj.sowing_date))
+                adObjects = adObjects.filter(
+                    Q(beginning_harvest_date=None) | Q(beginning_harvest_date__gte=pub_obj.harvest_date))
+                adObjects = adObjects.filter(
+                    Q(ending_harvest_date=None) | Q(ending_harvest_date__lte=pub_obj.harvest_date))
+
+        elif obj_type == 'order':
+            order_obj = Order.objects.filter(id=obj_id).first()
+            linkedToObjects = LinkedTo.objects.filter(supply__id=order_obj.supplies.id)
+            adIds = []
+            adObjects = []
+            for object in linkedToObjects:
+                adIds.append(object.advertisement.id)
+            if adIds:
+                adObjects = Advertisement.objects.filter(id__in=adIds, remaining_credits__gt=0, for_publications=True)
+                adObjects = adObjects.filter(
+                    Q(department=None) | Q(department__id=order_obj.user.district.department.id))
+                adObjects = adObjects.filter(Q(region=None) | Q(region__id=order_obj.user.district.region.id))
+                adObjects = adObjects.filter(Q(district=None) | Q(district__id=order_obj.user.district.id))
+                adObjects = adObjects.filter(
+                    Q(beginning_sowing_date=None) | Q(beginning_sowing_date__gte=order_obj.desired_sowing_date))
+                adObjects = adObjects.filter(
+                    Q(ending_sowing_date=None) | Q(ending_sowing_date__lte=order_obj.desired_sowing_date))
+                adObjects = adObjects.filter(
+                    Q(beginning_harvest_date=None) | Q(beginning_harvest_date__gte=order_obj.desired_harvest_date))
+                adObjects = adObjects.filter(
+                    Q(ending_harvest_date=None) | Q(ending_harvest_date__lte=order_obj.desired_harvest_date))
+        if adObjects:
+            it = random.choice(adObjects)
+            id_it = it.id
+            Advertisement.objects.filter(id=id_it).update(remaining_credits=F('remaining_credits') - 1)
+            return JsonResponse({
+                'data': True,
+                'URL': it.URL,
+                'picture_URL': it.picture_URL,
+            })
+        else:
+            return JsonResponse({
+                'data': False,
+            })
+
+
+class PostUserFromWeb(generics.ListCreateAPIView):
+    #permission_classes = [permissions.IsAuthenticated]
+
+    # serializer_class = AdvertisementSerializer
+    def post(self, request, **kwargs):
+        try:
+            first_name = request.data.get('first_name')
+            last_name = request.data.get('last_name')
+            phone_number = request.data.get('phone_number')
+            if get_user_model().objects.filter(phone_number=phone_number):
+                return HttpResponse(json.dumps({"message": "Teléfono ya registrado"}), status=400, content_type="application/json")
+            password = request.data.get('password')
+            DNI = request.data.get('DNI')
+            RUC = request.data.get('RUC')
+            district_id = request.data.get('district_id')
+            district_obj = District.objects.filter(id=district_id).first()
+            user = get_user_model().objects.create(first_name=first_name,
+                                                   last_name=last_name,
+                                                   phone_number=phone_number,
+                                                   password=password,
+                                                   DNI=DNI,
+                                                   role='an',
+                                                   RUC=RUC,
+                                                   district=district_obj)
+
+            file_obj = request.FILES.get('file', '')
+            # if file_obj == '':
+            # Compressing Image and Preventing Rotation
+            img = Image.open(file_obj)
+            get_exif_info = img._getexif()
+            if get_exif_info:
+                exif = dict((ExifTags.TAGS[k], v) for k, v in get_exif_info.items() if k in ExifTags.TAGS)
+                if exif['Orientation'] == 3:
+                    img = img.rotate(180, expand=True)
+                elif exif['Orientation'] == 6:
+                    img = img.rotate(270, expand=True)
+                elif exif['Orientation'] == 8:
+                    img = img.rotate(90, expand=True)
+
+            img.thumbnail((500, 500), Image.ANTIALIAS)
+            thumb_io = BytesIO()
+            img.save(thumb_io, format='JPEG')
+            image_file = InMemoryUploadedFile(thumb_io, None, str(file_obj.name) + '.jpg', 'image/jpeg', thumb_io.tell,
+                                              None)
+
+            # organize a path for the file in bucket
+            file_directory_within_bucket = 'profile_pictures/'
+
+            # synthesize a full file path; note that we included the filename
+            file_path_within_bucket = os.path.join(
+                file_directory_within_bucket,
+                user.phone_number.as_e164[1:]
+            )
+
+            media_storage = MediaStorage()
+
+            media_storage.save(file_path_within_bucket, image_file)
+            file_url = media_storage.url(file_path_within_bucket)
+            no_params_url = urljoin(file_url, urlparse(file_url).path)
+            user.profile_picture_URL = no_params_url
+            user.save()
+
+            return HttpResponse('Created correctly.', status=200)
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")

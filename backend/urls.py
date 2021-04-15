@@ -50,6 +50,7 @@ urlpatterns = [
     path('updateRol/', views.ChangeUserRol.as_view()),
     path('myInfo/', views.GetUserData.as_view()),
     path('myPub/', views.GetMyPub.as_view()),
+    path('myAd/', views.GetMyAd.as_view()),
     path('myFeaturedPub/', views.GetMyFeaturedPub.as_view()),
     re_path(r'myPub/(?P<id>\d+)/', views.GetMyPubByID.as_view()),
     re_path(r'Pubs/(?P<id>\d+)/', views.GetPubs.as_view()),
@@ -60,6 +61,10 @@ urlpatterns = [
     path('myProspects/', views.GetMyProspects.as_view()),
     path('mySuggestions/', views.GetMySuggestions.as_view()),
     path('sellPublication/', views.SellPublicationView.as_view()),
-    path('solveOrder/', views.SolveOrderView.as_view())
+    path('solveOrder/', views.SolveOrderView.as_view()),
+    path('postAd/', views.PostAd.as_view()),
+    path('estimatePublic/', views.EstimatePublic.as_view()),
+    path('getAdForIt/', views.GetAdForIt.as_view()),
+    path('postUserFromWeb/', views.PostUserFromWeb.as_view()),
     #  path('createOrder/', views.CreateMyOrder.as_view()),
 ]

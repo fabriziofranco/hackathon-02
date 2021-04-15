@@ -68,7 +68,7 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=30, null=True, blank=True)
     last_name = models.CharField(max_length=30, null=True, blank=True)
     profile_picture_URL = models.URLField(null=True, blank=True)
-    number_of_credits = models.IntegerField(default=0)
+    #number_of_credits = models.IntegerField(default=0)
     RUC = models.CharField(max_length=11, null=True, blank=True)
     DNI = models.CharField(max_length=8, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
@@ -128,15 +128,30 @@ class Supply(models.Model):
 
 class Advertisement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    supply = models.ForeignKey(Supply, on_delete=models.CASCADE)
-    reach = models.IntegerField()
-    harvest_date = models.DateTimeField()
-    sowing_date = models.DateTimeField()
+    remaining_credits = models.IntegerField(blank=False, null=False)
+
+    region = models.ForeignKey(Region, related_name='advertisements', on_delete=models.CASCADE, blank=True, null=True)
+    department = models.ForeignKey(Department, related_name='advertisements', on_delete=models.CASCADE, blank=True,
+                                   null=True)
+    district = models.ForeignKey(District, related_name='advertisements', on_delete=models.CASCADE, blank=True,
+                                 null=True)
+
+    for_orders = models.BooleanField(default=True)
+    for_publications = models.BooleanField(default=True)
+
+    picture_URL = models.URLField(null=True, blank=True)
+    URL = models.URLField(null=True, blank=True)
+    name = models.CharField(max_length=100, blank= True, null=False)
+
+    beginning_sowing_date = models.DateTimeField(blank=True, null=True)
+    ending_sowing_date = models.DateTimeField(blank=True, null=True)
+    beginning_harvest_date = models.DateTimeField(blank=True, null=True)
+    ending_harvest_date = models.DateTimeField(blank=True, null=True)
 
 
-class AddressedTo(models.Model):
-    advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE)
-    district = models.ForeignKey(District, on_delete=models.CASCADE)
+class LinkedTo(models.Model):
+    advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE, default=None)
+    supply = models.ForeignKey(Supply, on_delete=models.CASCADE, default=None)
 
 
 WEIGHT_UNITS = [

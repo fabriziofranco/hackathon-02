@@ -58,7 +58,6 @@ class UserChangeForm(forms.ModelForm):
                   'first_name',
                   'last_name',
                   'profile_picture_URL',
-                  'number_of_credits',
                   'RUC',
                   'DNI',
                   'latitude',
@@ -106,7 +105,6 @@ class UserAdmin(BaseUserAdmin):
                                       'first_name',
                                       'last_name',
                                       'profile_picture_URL',
-                                      'number_of_credits',
                                       'district',
                                       'RUC',
                                       'DNI',
@@ -144,7 +142,6 @@ class SupplyAdmin(admin.ModelAdmin):
     ordering = ('name',)
     change_form = SupplyForm
     add_form = SupplyCreationForm
-
 
     def get_form(self, request, obj=None, **kwargs):
         if not obj:
@@ -187,9 +184,15 @@ class OrderAdmin(admin.ModelAdmin):
     test.short_description = 'DISTRICT'
     test.admin_order_field = 'user__district'
     search_fields = (
-    'user__district__name', 'user__district__region__name', 'user__district__department__name', 'supplies__name')
+        'user__district__name', 'user__district__region__name', 'user__district__department__name', 'supplies__name')
     ordering = ('is_solved', 'supplies')
 
+
+class AdAdmin(admin.ModelAdmin):
+    pass
+
+class LinkedToAdmin(admin.ModelAdmin):
+    pass
 
 # Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)
@@ -197,9 +200,9 @@ admin.site.unregister(Group)
 admin.site.register(Supply, SupplyAdmin)
 admin.site.register(Publish, PublishAdmin)
 admin.site.register(Order, OrderAdmin)
-# admin.site.register(Advertisement)
-# admin.site.register(AddressedTo)
+admin.site.register(Advertisement, AdAdmin)
+admin.site.register(LinkedTo,LinkedToAdmin)
 
 # admin.site.register(Department)
 # admin.site.register(Region)
-# admin.site.register(District)
+# admin.site.register(Distreict)
