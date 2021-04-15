@@ -887,7 +887,7 @@ class GetAdForIt(generics.ListCreateAPIView):
 
 
 class PostUserFromWeb(generics.ListCreateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
     # serializer_class = AdvertisementSerializer
     def post(self, request, **kwargs):
