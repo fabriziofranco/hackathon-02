@@ -905,7 +905,6 @@ class PostUserFromWeb(generics.ListCreateAPIView):
             user = get_user_model().objects.create(first_name=first_name,
                                                    last_name=last_name,
                                                    phone_number=phone_number,
-                                                   password=password,
                                                    DNI=DNI,
                                                    role='an',
                                                    RUC=RUC,
@@ -946,6 +945,7 @@ class PostUserFromWeb(generics.ListCreateAPIView):
             file_url = media_storage.url(file_path_within_bucket)
             no_params_url = urljoin(file_url, urlparse(file_url).path)
             user.profile_picture_URL = no_params_url
+            user.set_password(password)
             user.save()
 
             return HttpResponse('Created correctly.', status=200)
