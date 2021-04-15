@@ -56,7 +56,6 @@ class UserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'profile_picture_URL',
-            'number_of_credits',
             'RUC',
             'DNI',
             'district',

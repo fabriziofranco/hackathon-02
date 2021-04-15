@@ -569,7 +569,7 @@ class GetMyOrder(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Order.objects.filter(user=user)
+        return Order.objects.filter(user=user).order_by('is_solved')
 
     def perform_create(self, serializer):
         serializer.validated_data['user'] = self.request.user
@@ -626,7 +626,7 @@ class GetMyPub(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Publish.objects.filter(user=user)
+        return Publish.objects.filter(user=user).order_by('is_sold')
 
     def perform_create(self, serializer):
         serializer.validated_data['user'] = self.request.user
@@ -819,10 +819,12 @@ class GetAdForIt(generics.ListCreateAPIView):
                 adObjects = adObjects.filter(Q(district=None) | Q(district__id=pub_obj.user.district.id))
                 adObjects = adObjects.filter(
                     Q(beginning_sowing_date=None) | Q(beginning_sowing_date__gte=pub_obj.sowing_date))
-                adObjects = adObjects.filter(Q(ending_sowing_date=None) | Q(ending_sowing_date__lte=pub_obj.sowing_date))
+                adObjects = adObjects.filter(
+                    Q(ending_sowing_date=None) | Q(ending_sowing_date__lte=pub_obj.sowing_date))
                 adObjects = adObjects.filter(
                     Q(beginning_harvest_date=None) | Q(beginning_harvest_date__gte=pub_obj.harvest_date))
-                adObjects = adObjects.filter(Q(ending_harvest_date=None) | Q(ending_harvest_date__lte=pub_obj.harvest_date))
+                adObjects = adObjects.filter(
+                    Q(ending_harvest_date=None) | Q(ending_harvest_date__lte=pub_obj.harvest_date))
 
         elif obj_type == 'order':
             order_obj = Order.objects.filter(id=obj_id).first()
@@ -858,3 +860,68 @@ class GetAdForIt(generics.ListCreateAPIView):
             return JsonResponse({
                 'data': False,
             })
+
+
+class PostUserFromWeb(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    # serializer_class = AdvertisementSerializer
+    def post(self, request, **kwargs):
+        try:
+            first_name = request.data.get('first_name')
+            last_name = request.data.get('last_name')
+            phone_number = request.data.get('phone_number')
+            password = request.data.get('password')
+            DNI = request.data.get('DNI')
+            RUC = request.data.get('RUC')
+            district_id = request.data.get('district_id')
+            district_obj = District.objects.filter(id=district_id).first()
+            user = get_user_model().objects.create(first_name=first_name,
+                                                   last_name=last_name,
+                                                   phone_number=phone_number,
+                                                   password=password,
+                                                   DNI=DNI,
+                                                   role='an',
+                                                   RUC=RUC,
+                                                   district=district_obj)
+
+            file_obj = request.FILES.get('file', '')
+            #if file_obj == '':
+                # Compressing Image and Preventing Rotation
+            img = Image.open(file_obj)
+            get_exif_info = img._getexif()
+            if get_exif_info:
+                exif = dict((ExifTags.TAGS[k], v) for k, v in get_exif_info.items() if k in ExifTags.TAGS)
+                if exif['Orientation'] == 3:
+                    img = img.rotate(180, expand=True)
+                elif exif['Orientation'] == 6:
+                    img = img.rotate(270, expand=True)
+                elif exif['Orientation'] == 8:
+                    img = img.rotate(90, expand=True)
+
+            img.thumbnail((500, 500), Image.ANTIALIAS)
+            thumb_io = BytesIO()
+            img.save(thumb_io, format='JPEG')
+            image_file = InMemoryUploadedFile(thumb_io, None, str(file_obj.name) + '.jpg', 'image/jpeg', thumb_io.tell,
+                                              None)
+
+            # organize a path for the file in bucket
+            file_directory_within_bucket = 'profile_pictures/'
+
+            # synthesize a full file path; note that we included the filename
+            file_path_within_bucket = os.path.join(
+                file_directory_within_bucket,
+                user.phone_number.as_e164[1:]
+            )
+
+            media_storage = MediaStorage()
+
+            media_storage.save(file_path_within_bucket, image_file)
+            file_url = media_storage.url(file_path_within_bucket)
+            no_params_url = urljoin(file_url, urlparse(file_url).path)
+            user.profile_picture_URL = no_params_url
+            user.save()
+
+            return HttpResponse('Created correctly.', status=200)
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")

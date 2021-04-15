@@ -58,7 +58,6 @@ class UserChangeForm(forms.ModelForm):
                   'first_name',
                   'last_name',
                   'profile_picture_URL',
-                  'number_of_credits',
                   'RUC',
                   'DNI',
                   'latitude',
@@ -106,7 +105,6 @@ class UserAdmin(BaseUserAdmin):
                                       'first_name',
                                       'last_name',
                                       'profile_picture_URL',
-                                      'number_of_credits',
                                       'district',
                                       'RUC',
                                       'DNI',
@@ -207,4 +205,4 @@ admin.site.register(LinkedTo,LinkedToAdmin)
 
 # admin.site.register(Department)
 # admin.site.register(Region)
-# admin.site.register(District)
+# admin.site.register(Distreict)
