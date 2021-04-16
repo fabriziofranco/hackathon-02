@@ -67,6 +67,9 @@ class UserSerializer(serializers.ModelSerializer):
             'is_verified',
             'password'
         ]
+        extra_kwargs = {
+            'number_of_credits': {'read_only': True}
+        }
 
     def create(self, validated_data):
         user = get_user_model().objects.create(
