@@ -68,7 +68,7 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=30, null=True, blank=True)
     last_name = models.CharField(max_length=30, null=True, blank=True)
     profile_picture_URL = models.URLField(null=True, blank=True)
-    #number_of_credits = models.IntegerField(default=0)
+    number_of_credits = models.IntegerField(default=0)
     RUC = models.CharField(max_length=11, null=True, blank=True)
     DNI = models.CharField(max_length=8, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
