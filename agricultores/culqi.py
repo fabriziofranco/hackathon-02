@@ -22,8 +22,7 @@ class CreateChargeClient(APIView):
         try:
             user = self.request.user
             if user.email is None:
-                return HttpResponse(json.dumps({"message": "El usuario no cuenta con un correo electrónico."}), status=400,
-                                    content_type="application/json")
+                user.email = request.data['email']
             creditos_a_comprar = int(request.data['amount']) * 0.1
 
             anti_fraud = dict()
@@ -31,7 +30,6 @@ class CreateChargeClient(APIView):
             anti_fraud['last_name'] = user.last_name
             anti_fraud['phone'] = str(user.phone_number.national_number)
 
-            request.data['email'] = user.email
             request.data['currency_code'] = 'PEN'
             request.data['description'] = 'Compra de ' + str(creditos_a_comprar) + ' créditos.'
             request.data['antifraud_details'] = anti_fraud
