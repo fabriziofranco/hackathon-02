@@ -113,6 +113,8 @@ class UserAdmin(BaseUserAdmin):
                                       )
                            }
          ),
+        ('Créditos', {'fields': ('number_of_credits',)}
+         ),
         ('Coordenadas', {'fields': ('latitude', 'longitude')}
          ),
         ('Permissions', {'fields': ('is_admin', 'is_advertiser',)}),
