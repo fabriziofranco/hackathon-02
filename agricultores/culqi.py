@@ -46,3 +46,16 @@ class CreateChargeClient(APIView):
 
         except Exception as e:
             return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
+
+
+class MyCredits(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        try:
+            credits = self.request.user.number_of_credits
+            return HttpResponse(json.dumps({"creditos": credits}), status=200,
+                                content_type="application/json")
+
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
