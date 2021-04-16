@@ -661,6 +661,7 @@ class PostAd(generics.ListCreateAPIView):
             for_publications = request.data.get('for_publications')
             picture_URL = request.data.get('picture_URL')
             URL = request.data.get('URL')
+            name = request.data.get('name')
 
             beginning_sowing_date = datetime.strptime(request.data.get('beginning_sowing_date'), '%d/%m/%y '
                                                                                                  '%H:%M:%S')
@@ -691,6 +692,7 @@ class PostAd(generics.ListCreateAPIView):
                                                   for_orders=for_orders,
                                                   for_publications=for_publications,
                                                   URL=URL,
+                                                  name=name,
                                                   beginning_sowing_date=beginning_sowing_date,
                                                   ending_sowing_date=ending_sowing_date,
                                                   beginning_harvest_date=beginning_harvest_date,
