@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.fields import CharField
 
-from agricultores.models import Department, District, Region, Supply, Advertisement, AddressedTo, Publish, Order
+from agricultores.models import Department, District, Region, Supply, Advertisement, LinkedTo, Publish, Order
 
 
 class RelatedFieldAlternative(serializers.PrimaryKeyRelatedField):
@@ -56,7 +56,6 @@ class UserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'profile_picture_URL',
-            'number_of_credits',
             'RUC',
             'DNI',
             'district',
@@ -96,14 +95,19 @@ class SuppliesSerializer(serializers.ModelSerializer):
 
 
 class AdvertisementSerializer(serializers.ModelSerializer):
+    region = RegionSerializer()
+    department = DepartmentSerializer()
+    district = DistrictSerializer()
     class Meta:
         model = Advertisement
         fields = '__all__'
 
 
 class AdressedToSerializer(serializers.ModelSerializer):
+    advertisement = AdvertisementSerializer()
+    supply = SuppliesSerializer()
     class Meta:
-        model = AddressedTo
+        model = LinkedTo
         fields = '__all__'
 
 
