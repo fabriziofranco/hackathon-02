@@ -57,6 +57,7 @@ class UserChangeForm(forms.ModelForm):
                   'email',
                   'first_name',
                   'last_name',
+                  'number_of_credits',
                   'profile_picture_URL',
                   'RUC',
                   'DNI',
@@ -111,6 +112,8 @@ class UserAdmin(BaseUserAdmin):
                                       'role'
                                       )
                            }
+         ),
+        ('Créditos', {'fields': ('number_of_credits',)}
          ),
         ('Coordenadas', {'fields': ('latitude', 'longitude')}
          ),

@@ -20,6 +20,7 @@ from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
 from agricultores import views
+from agricultores import culqi
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet, basename='users')
@@ -60,6 +61,8 @@ urlpatterns = [
     re_path(r'myOrder/(?P<id>\d+)/', views.GetMyOrderByID.as_view()),
     path('myProspects/', views.GetMyProspects.as_view()),
     path('mySuggestions/', views.GetMySuggestions.as_view()),
+    path('purchaseCredits/', culqi.CreateChargeClient.as_view()),
+    path('myCredits/', culqi.MyCredits.as_view()),
     path('sellPublication/', views.SellPublicationView.as_view()),
     path('solveOrder/', views.SolveOrderView.as_view()),
     path('postAd/', views.PostAd.as_view()),
