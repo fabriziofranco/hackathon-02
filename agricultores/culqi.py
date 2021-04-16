@@ -41,7 +41,7 @@ class CreateChargeClient(APIView):
                 user.number_of_credits += creditos_a_comprar
                 user.save()
 
-            return HttpResponse(json.dumps({"message": response_dict}), status=200,
+            return HttpResponse(json.dumps({"message": response_dict}), status=response.status_code,
                                 content_type="application/json")
 
         except Exception as e:
