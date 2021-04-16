@@ -901,11 +901,13 @@ class PostUserFromWeb(generics.ListCreateAPIView):
             DNI = request.data.get('DNI')
             RUC = request.data.get('RUC')
             district_id = request.data.get('district_id')
+            email = request.data.get('email')
             district_obj = District.objects.filter(id=district_id).first()
             user = get_user_model().objects.create(first_name=first_name,
                                                    last_name=last_name,
                                                    phone_number=phone_number,
                                                    DNI=DNI,
+                                                   email=email,
                                                    role='an',
                                                    RUC=RUC,
                                                    district=district_obj)
