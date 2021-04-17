@@ -69,5 +69,6 @@ urlpatterns = [
     path('estimatePublic/', views.EstimatePublic.as_view()),
     path('getAdForIt/', views.GetAdForIt.as_view()),
     path('postUserFromWeb/', views.PostUserFromWeb.as_view()),
+    path('deleteAd/', views.DeleteAd.as_view()),
     #  path('createOrder/', views.CreateMyOrder.as_view()),
 ]

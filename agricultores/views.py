@@ -642,6 +642,14 @@ class PostAd(generics.ListCreateAPIView):
             user = self.request.user
 
             remaining_credits = request.data.get('remaining_credits')
+            if int(remaining_credits) > user.number_of_credits:
+                return HttpResponse(json.dumps({"message": "No hay suficientes creditos en su cuenta"}), status=400,
+                                    content_type="application/json")
+
+            get_user_model().objects.filter(id=self.request.user.id).update(number_of_credits=
+                                                                            F('number_of_credits') - int(
+                                                                                remaining_credits))
+
             if request.data.get('region_id') != 0:
                 region = Region.objects.filter(pk=request.data.get('region_id')).first()
             else:
@@ -702,7 +710,7 @@ class PostAd(generics.ListCreateAPIView):
 
             file_obj = request.FILES.get('file', '')
             img = Image.open(file_obj)
-            img.thumbnail((500,500),Image.ANTIALIAS)
+            img.thumbnail((500, 500), Image.ANTIALIAS)
             thumb_io = BytesIO()
             img.save(thumb_io, format='JPEG')
             image_file = InMemoryUploadedFile(thumb_io, None, str(file_obj.name) + '.jpg', 'image/jpeg', thumb_io.tell,
@@ -889,7 +897,7 @@ class GetAdForIt(generics.ListCreateAPIView):
 
 
 class PostUserFromWeb(generics.ListCreateAPIView):
-    #permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     # serializer_class = AdvertisementSerializer
     def post(self, request, **kwargs):
@@ -898,7 +906,8 @@ class PostUserFromWeb(generics.ListCreateAPIView):
             last_name = request.data.get('last_name')
             phone_number = request.data.get('phone_number')
             if get_user_model().objects.filter(phone_number=phone_number):
-                return HttpResponse(json.dumps({"message": "Teléfono ya registrado"}), status=400, content_type="application/json")
+                return HttpResponse(json.dumps({"message": "Teléfono ya registrado"}), status=400,
+                                    content_type="application/json")
             password = request.data.get('password')
             DNI = request.data.get('DNI')
             RUC = request.data.get('RUC')
@@ -953,5 +962,23 @@ class PostUserFromWeb(generics.ListCreateAPIView):
             user.save()
 
             return HttpResponse('Created correctly.', status=200)
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
+
+
+class DeleteAd(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    # serializer_class = AdvertisementSerializer
+    def post(self, request, **kwargs):
+        try:
+            ad_id = request.data.get('ad_id')
+            credits_ret = Advertisement.objects.filter(id=ad_id).first().remaining_credits
+            Advertisement.objects.filter(id=ad_id).first().delete()
+
+            get_user_model().objects.filter(id=self.request.user.id).update(number_of_credits=
+                                                                            F('number_of_credits') + int(credits_ret))
+
+            return HttpResponse('Removed correctly.', status=200)
         except Exception as e:
             return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
