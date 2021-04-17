@@ -924,40 +924,42 @@ class PostUserFromWeb(generics.ListCreateAPIView):
                                                    district=district_obj)
 
             file_obj = request.FILES.get('file', '')
+            if file_obj:
+
             # if file_obj == '':
             # Compressing Image and Preventing Rotation
-            img = Image.open(file_obj)
-            get_exif_info = img._getexif()
-            if get_exif_info:
-                exif = dict((ExifTags.TAGS[k], v) for k, v in get_exif_info.items() if k in ExifTags.TAGS)
-                if exif['Orientation'] == 3:
-                    img = img.rotate(180, expand=True)
-                elif exif['Orientation'] == 6:
-                    img = img.rotate(270, expand=True)
-                elif exif['Orientation'] == 8:
-                    img = img.rotate(90, expand=True)
+                img = Image.open(file_obj)
+                get_exif_info = img._getexif()
+                if get_exif_info:
+                    exif = dict((ExifTags.TAGS[k], v) for k, v in get_exif_info.items() if k in ExifTags.TAGS)
+                    if exif['Orientation'] == 3:
+                        img = img.rotate(180, expand=True)
+                    elif exif['Orientation'] == 6:
+                        img = img.rotate(270, expand=True)
+                    elif exif['Orientation'] == 8:
+                        img = img.rotate(90, expand=True)
 
-            img.thumbnail((500, 500), Image.ANTIALIAS)
-            thumb_io = BytesIO()
-            img.save(thumb_io, format='JPEG')
-            image_file = InMemoryUploadedFile(thumb_io, None, str(file_obj.name) + '.jpg', 'image/jpeg', thumb_io.tell,
-                                              None)
+                img.thumbnail((500, 500), Image.ANTIALIAS)
+                thumb_io = BytesIO()
+                img.save(thumb_io, format='JPEG')
+                image_file = InMemoryUploadedFile(thumb_io, None, str(file_obj.name) + '.jpg', 'image/jpeg', thumb_io.tell,
+                                                  None)
 
-            # organize a path for the file in bucket
-            file_directory_within_bucket = 'profile_pictures/'
+                # organize a path for the file in bucket
+                file_directory_within_bucket = 'profile_pictures/'
 
-            # synthesize a full file path; note that we included the filename
-            file_path_within_bucket = os.path.join(
-                file_directory_within_bucket,
-                user.phone_number.as_e164[1:]
-            )
+                # synthesize a full file path; note that we included the filename
+                file_path_within_bucket = os.path.join(
+                    file_directory_within_bucket,
+                    user.phone_number.as_e164[1:]
+                )
 
-            media_storage = MediaStorage()
+                media_storage = MediaStorage()
 
-            media_storage.save(file_path_within_bucket, image_file)
-            file_url = media_storage.url(file_path_within_bucket)
-            no_params_url = urljoin(file_url, urlparse(file_url).path)
-            user.profile_picture_URL = no_params_url
+                media_storage.save(file_path_within_bucket, image_file)
+                file_url = media_storage.url(file_path_within_bucket)
+                no_params_url = urljoin(file_url, urlparse(file_url).path)
+                user.profile_picture_URL = no_params_url
             user.set_password(password)
             user.save()
 
