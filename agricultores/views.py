@@ -925,9 +925,6 @@ class PostUserFromWeb(generics.ListCreateAPIView):
 
             file_obj = request.FILES.get('file', '')
             if file_obj:
-
-            # if file_obj == '':
-            # Compressing Image and Preventing Rotation
                 img = Image.open(file_obj)
                 get_exif_info = img._getexif()
                 if get_exif_info:
