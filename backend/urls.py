@@ -70,5 +70,7 @@ urlpatterns = [
     path('postUserFromWeb/', views.PostUserFromWeb.as_view()),
     path('deleteAd/', views.DeleteAd.as_view()),
     re_path(r'deleteAd/(?P<id>\d+)/', views.DeleteAd.as_view()),
+    path('getSupplies/', views.GetSupplies.as_view()),
+    re_path(r'getSupplies/(?P<id>\d+)/', views.GetSupplies.as_view()),
     #  path('createOrder/', views.CreateMyOrder.as_view()),
 ]

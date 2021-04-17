@@ -969,7 +969,6 @@ class PostUserFromWeb(generics.ListCreateAPIView):
 class DeleteAd(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    # serializer_class = AdvertisementSerializer
     def delete(self, request, **kwargs):
         try:
             ad_id = self.kwargs['id']
@@ -980,5 +979,25 @@ class DeleteAd(generics.ListCreateAPIView):
                                                                             F('number_of_credits') + int(credits_ret))
 
             return HttpResponse('Removed correctly.', status=200)
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
+
+
+class GetSupplies(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, **kwargs):
+        try:
+            ad_id = self.kwargs['id']
+            ad_obj = Advertisement.objects.filter(id=ad_id).first()
+            linkedToObjects = LinkedTo.objects.filter(advertisement=ad_obj)
+            supplyNames = []
+            for obj in linkedToObjects:
+                it = obj.supply.name
+                if it not in supplyNames:
+                    supplyNames.append(it)
+            if not supplyNames:
+                supplyNames = "Todos los insumos"
+            return HttpResponse(json.dumps({"supplies": supplyNames}), status=200)
         except Exception as e:
             return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
