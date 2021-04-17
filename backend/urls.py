@@ -34,7 +34,6 @@ router.register(r'addressedTos', views.AddressedToViewSet, basename='addressedTo
 router.register(r'publish', views.PublishViewSet, basename='publish')
 router.register(r'order', views.OrderViewSet, basename='order')
 
-
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
@@ -70,5 +69,6 @@ urlpatterns = [
     path('getAdForIt/', views.GetAdForIt.as_view()),
     path('postUserFromWeb/', views.PostUserFromWeb.as_view()),
     path('deleteAd/', views.DeleteAd.as_view()),
+    re_path(r'deleteAd/(?P<id>\d+)/', views.DeleteAd.as_view()),
     #  path('createOrder/', views.CreateMyOrder.as_view()),
 ]

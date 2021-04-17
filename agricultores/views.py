@@ -970,9 +970,9 @@ class DeleteAd(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     # serializer_class = AdvertisementSerializer
-    def post(self, request, **kwargs):
+    def delete(self, request, **kwargs):
         try:
-            ad_id = request.data.get('ad_id')
+            ad_id = self.kwargs['id']
             credits_ret = Advertisement.objects.filter(id=ad_id).first().remaining_credits
             Advertisement.objects.filter(id=ad_id).first().delete()
 
