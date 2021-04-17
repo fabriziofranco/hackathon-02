@@ -129,7 +129,7 @@ class Supply(models.Model):
 class Advertisement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     remaining_credits = models.IntegerField(blank=False, null=False)
-
+    original_credits = models.IntegerField(blank=True, null=True)
     region = models.ForeignKey(Region, related_name='advertisements', on_delete=models.CASCADE, blank=True, null=True)
     department = models.ForeignKey(Department, related_name='advertisements', on_delete=models.CASCADE, blank=True,
                                    null=True)
@@ -141,7 +141,7 @@ class Advertisement(models.Model):
 
     picture_URL = models.URLField(null=True, blank=True)
     URL = models.URLField(null=True, blank=True)
-    name = models.CharField(max_length=100, blank= True, null=False)
+    name = models.CharField(max_length=100, blank=True, null=False)
 
     beginning_sowing_date = models.DateTimeField(blank=True, null=True)
     ending_sowing_date = models.DateTimeField(blank=True, null=True)

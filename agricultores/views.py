@@ -694,6 +694,7 @@ class PostAd(generics.ListCreateAPIView):
                 ending_harvest_date = None
             ad_ojb = Advertisement.objects.create(user=user,
                                                   remaining_credits=remaining_credits,
+                                                  original_credits=remaining_credits,
                                                   region=region,
                                                   department=department,
                                                   district=district,
