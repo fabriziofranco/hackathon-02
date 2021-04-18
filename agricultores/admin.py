@@ -82,10 +82,6 @@ class SupplyForm(forms.ModelForm):
     class Meta:
         model = Supply
         fields = ('name',
-                  'unsolved_orders',
-                  'solved_orders',
-                  'unsold_publications',
-                  'sold_publications',
                   'days_for_harvest'
                   )
 
