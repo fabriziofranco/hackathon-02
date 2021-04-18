@@ -148,11 +148,22 @@ class Advertisement(models.Model):
     beginning_harvest_date = models.DateTimeField(blank=True, null=True)
     ending_harvest_date = models.DateTimeField(blank=True, null=True)
 
+    class Meta:
+        verbose_name = 'Anuncio'
+        verbose_name_plural = 'Anuncios'
+        ordering = ["user"]
+
+    def __str__(self):
+        return f"{self.user.phone_number}" + ": " + f"{self.name}"
+
 
 class LinkedTo(models.Model):
     advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE, default=None)
     supply = models.ForeignKey(Supply, on_delete=models.CASCADE, default=None)
 
+    class Meta:
+        verbose_name = 'Anuncio - Insumo'
+        verbose_name_plural = 'Anuncios - Insumos'
 
 WEIGHT_UNITS = [
     ('kg', 'Kilogramos'),

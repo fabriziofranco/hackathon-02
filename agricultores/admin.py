@@ -192,10 +192,39 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 class AdAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('user', 'name', 'original_credits', 'remaining_credits', 'department', 'region',
+                    'test', "for_orders", "for_publications")
+
+    list_filter = (('original_credits', SliderNumericFilter), ('remaining_credits', SliderNumericFilter), 'for_orders',
+                   'for_publications')
+
+    def test(self, obj):
+        if obj.district:
+            return obj.district.name
+        else:
+            return '-'
+
+    test.short_description = 'DISTRICT'
+    test.admin_order_field = 'district__name'
+    ordering = ('name', 'user')
+
+    search_fields = ('name', 'user__phone_number', 'district__name', 'region__name',
+                     'department__name')
+
 
 class LinkedToAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('advertisement', 'supply')
+
+    def has_change_permission(self, request, obj=None):
+        if obj is not None and obj.id > 1:
+            return False
+        return super().has_change_permission(request, obj=obj)
+    ordering = ('advertisement', 'supply')
+
+    search_fields = (
+        'advertisement__name', 'supply__name', 'advertisement__user__phone_number', 'advertisement__district__name',
+        'advertisement__region__name', 'advertisement__department__name')
+
 
 # Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)
@@ -204,7 +233,7 @@ admin.site.register(Supply, SupplyAdmin)
 admin.site.register(Publish, PublishAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Advertisement, AdAdmin)
-admin.site.register(LinkedTo,LinkedToAdmin)
+admin.site.register(LinkedTo, LinkedToAdmin)
 
 # admin.site.register(Department)
 # admin.site.register(Region)
