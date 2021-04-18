@@ -997,7 +997,7 @@ class GetSupplies(generics.ListCreateAPIView):
                 if it not in supplyNames:
                     supplyNames.append(it)
             if len(supplyNames) == len(Supply.objects.all()):
-                supplyNames = "Todos los insumos"
+                supplyNames = ["Todos los insumos"]
             return HttpResponse(json.dumps({"supplies": supplyNames}), status=200)
         except Exception as e:
             return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
