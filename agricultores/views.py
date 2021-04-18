@@ -1001,3 +1001,26 @@ class GetSupplies(generics.ListCreateAPIView):
             return HttpResponse(json.dumps({"supplies": supplyNames}), status=200)
         except Exception as e:
             return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
+
+
+class AddCredits(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request, **kwargs):
+        try:
+            ad_id = self.kwargs['id']
+            user = self.request.user
+            new_credits = request.data.get('credits')
+            if int(new_credits) > user.number_of_credits:
+                return HttpResponse(json.dumps({"message": "No hay suficientes creditos en su cuenta"}), status=400,
+                                    content_type="application/json")
+
+            Advertisement.objects.filter(id=ad_id).update(remaining_credits=F('remaining_credits') + new_credits,
+                                                          original_credits=F('original_credits') + new_credits)
+
+            get_user_model().objects.filter(id=self.request.user.id).update(number_of_credits=
+                                                                            F('number_of_credits') - int(new_credits))
+
+            return HttpResponse('Updated correctly.', status=200)
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
