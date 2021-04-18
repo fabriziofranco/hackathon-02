@@ -132,7 +132,7 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 
-class SupplyAdmin(admin.ModelAdmin):
+class SupplyAdmin(NumericFilterModelAdmin):
     list_display = ('name', 'sold_publications', 'unsold_publications', 'solved_orders', 'unsolved_orders',)
 
     list_filter = (('sold_publications', SliderNumericFilter),
@@ -158,7 +158,7 @@ class SupplyAdmin(admin.ModelAdmin):
 admin.site.site_header = "Panel Administrativo - COSECHA"
 
 
-class PublishAdmin(admin.ModelAdmin):
+class PublishAdmin(NumericFilterModelAdmin):
     list_display = ('user', 'supplies', 'unit_price', 'weight_unit', 'harvest_date',
                     'is_sold', "test")
 
@@ -175,7 +175,7 @@ class PublishAdmin(admin.ModelAdmin):
                      'supplies__name')
 
 
-class OrderAdmin(admin.ModelAdmin):
+class OrderAdmin(NumericFilterModelAdmin):
     list_display = ('user', 'supplies', 'unit_price', 'weight_unit', 'desired_harvest_date',
                     'is_solved', "test")
 
@@ -191,7 +191,7 @@ class OrderAdmin(admin.ModelAdmin):
     ordering = ('is_solved', 'supplies')
 
 
-class AdAdmin(admin.ModelAdmin):
+class AdAdmin(NumericFilterModelAdmin):
     list_display = ('user', 'name', 'original_credits', 'remaining_credits', 'department', 'region',
                     'test', "for_orders", "for_publications")
 

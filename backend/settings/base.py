@@ -37,6 +37,7 @@ AUTH_USER_MODEL = 'agricultores.User'
 # Application definition
 
 INSTALLED_APPS = [
+    'admin_numeric_filter',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,7 +48,6 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'rest_framework',
     'storages',
-    'admin_numeric_filter',
     'corsheaders',
 ]
 
