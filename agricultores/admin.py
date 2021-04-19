@@ -138,10 +138,10 @@ class SupplyAdmin(NumericFilterModelAdmin):
     ordering = ('name',)
 
     def get_queryset(self, request):
-        return Supply.objects.annotate(sold_count=Count('publish', filter=Q(publish__is_sold=True)),
-                                       unsold_count=Count('publish', filter=Q(publish__is_sold=False)),
-                                       solved_count=Count('order', filter=Q(order__is_solved=True)),
-                                       unsolved_count=Count('order', filter=Q(order__is_solved=False)))
+        return Supply.objects.annotate(sold_count=Count('publish', filter=Q(publish__is_sold=True))).\
+            annotate(unsold_count=Count('publish', filter=Q(publish__is_sold=False))).\
+            annotate(solved_count=Count('order', filter=Q(order__is_solved=True))).\
+            annotate(unsolved_count=Count('order', filter=Q(order__is_solved=False)))
 
     def sold_count(self, obj):
         return obj.sold_count
