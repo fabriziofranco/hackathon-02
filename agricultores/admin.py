@@ -189,7 +189,7 @@ class OrderAdmin(NumericFilterModelAdmin):
 
 class AdAdmin(NumericFilterModelAdmin):
     list_display = ('user', 'name', 'original_credits', 'remaining_credits', 'department', 'region',
-                    'test', "for_orders", "for_publications")
+                    'test', "for_publications", "for_orders")
 
     list_filter = (('original_credits', SliderNumericFilter), ('remaining_credits', SliderNumericFilter), 'for_orders',
                    'for_publications')
