@@ -68,7 +68,7 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=30, null=True, blank=True)
     last_name = models.CharField(max_length=30, null=True, blank=True)
     profile_picture_URL = models.URLField(null=True, blank=True)
-    #number_of_credits = models.IntegerField(default=0)
+    number_of_credits = models.IntegerField(default=0)
     RUC = models.CharField(max_length=11, null=True, blank=True)
     DNI = models.CharField(max_length=8, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
@@ -129,7 +129,7 @@ class Supply(models.Model):
 class Advertisement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     remaining_credits = models.IntegerField(blank=False, null=False)
-
+    original_credits = models.IntegerField(blank=True, null=True)
     region = models.ForeignKey(Region, related_name='advertisements', on_delete=models.CASCADE, blank=True, null=True)
     department = models.ForeignKey(Department, related_name='advertisements', on_delete=models.CASCADE, blank=True,
                                    null=True)
@@ -141,18 +141,29 @@ class Advertisement(models.Model):
 
     picture_URL = models.URLField(null=True, blank=True)
     URL = models.URLField(null=True, blank=True)
-    name = models.CharField(max_length=100, blank= True, null=False)
+    name = models.CharField(max_length=100, blank=True, null=False)
 
     beginning_sowing_date = models.DateTimeField(blank=True, null=True)
     ending_sowing_date = models.DateTimeField(blank=True, null=True)
     beginning_harvest_date = models.DateTimeField(blank=True, null=True)
     ending_harvest_date = models.DateTimeField(blank=True, null=True)
 
+    class Meta:
+        verbose_name = 'Anuncio'
+        verbose_name_plural = 'Anuncios'
+        ordering = ["user"]
+
+    def __str__(self):
+        return f"{self.user.phone_number}" + ": " + f"{self.name}"
+
 
 class LinkedTo(models.Model):
     advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE, default=None)
     supply = models.ForeignKey(Supply, on_delete=models.CASCADE, default=None)
 
+    class Meta:
+        verbose_name = 'Anuncio - Insumo'
+        verbose_name_plural = 'Anuncios - Insumos'
 
 WEIGHT_UNITS = [
     ('kg', 'Kilogramos'),

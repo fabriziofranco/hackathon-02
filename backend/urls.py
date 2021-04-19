@@ -20,6 +20,7 @@ from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
 from agricultores import views
+from agricultores import culqi
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet, basename='users')
@@ -32,7 +33,6 @@ router.register(r'advertisements', views.AdvertisementViewSet, basename='adverti
 router.register(r'addressedTos', views.AddressedToViewSet, basename='addressedTos')
 router.register(r'publish', views.PublishViewSet, basename='publish')
 router.register(r'order', views.OrderViewSet, basename='order')
-
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -60,11 +60,19 @@ urlpatterns = [
     re_path(r'myOrder/(?P<id>\d+)/', views.GetMyOrderByID.as_view()),
     path('myProspects/', views.GetMyProspects.as_view()),
     path('mySuggestions/', views.GetMySuggestions.as_view()),
+    path('purchaseCredits/', culqi.CreateChargeClient.as_view()),
+    path('myCredits/', culqi.MyCredits.as_view()),
     path('sellPublication/', views.SellPublicationView.as_view()),
     path('solveOrder/', views.SolveOrderView.as_view()),
     path('postAd/', views.PostAd.as_view()),
     path('estimatePublic/', views.EstimatePublic.as_view()),
     path('getAdForIt/', views.GetAdForIt.as_view()),
     path('postUserFromWeb/', views.PostUserFromWeb.as_view()),
+    path('deleteAd/', views.DeleteAd.as_view()),
+    re_path(r'deleteAd/(?P<id>\d+)/', views.DeleteAd.as_view()),
+    path('getSupplies/', views.GetSupplies.as_view()),
+    re_path(r'getSupplies/(?P<id>\d+)/', views.GetSupplies.as_view()),
+    path('addCredits/', views.AddCredits.as_view()),
+    re_path(r'addCredits/(?P<id>\d+)/', views.AddCredits.as_view()),
     #  path('createOrder/', views.CreateMyOrder.as_view()),
 ]

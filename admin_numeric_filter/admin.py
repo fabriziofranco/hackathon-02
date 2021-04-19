@@ -117,7 +117,7 @@ class RangeNumericFilter(admin.FieldListFilter):
 
 
 class SliderNumericFilter(RangeNumericFilter):
-    MAX_DECIMALS = 7
+    MAX_DECIMALS = 2
     STEP = None
 
     template = 'admin/filter_numeric_slider.html'

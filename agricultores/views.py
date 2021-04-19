@@ -642,6 +642,14 @@ class PostAd(generics.ListCreateAPIView):
             user = self.request.user
 
             remaining_credits = request.data.get('remaining_credits')
+            if int(remaining_credits) > user.number_of_credits:
+                return HttpResponse(json.dumps({"message": "No hay suficientes creditos en su cuenta"}), status=400,
+                                    content_type="application/json")
+
+            get_user_model().objects.filter(id=self.request.user.id).update(number_of_credits=
+                                                                            F('number_of_credits') - int(
+                                                                                remaining_credits))
+
             if request.data.get('region_id') != 0:
                 region = Region.objects.filter(pk=request.data.get('region_id')).first()
             else:
@@ -661,6 +669,7 @@ class PostAd(generics.ListCreateAPIView):
             for_publications = request.data.get('for_publications')
             picture_URL = request.data.get('picture_URL')
             URL = request.data.get('URL')
+            name = request.data.get('name')
 
             beginning_sowing_date = datetime.strptime(request.data.get('beginning_sowing_date'), '%d/%m/%y '
                                                                                                  '%H:%M:%S')
@@ -685,12 +694,14 @@ class PostAd(generics.ListCreateAPIView):
                 ending_harvest_date = None
             ad_ojb = Advertisement.objects.create(user=user,
                                                   remaining_credits=remaining_credits,
+                                                  original_credits=remaining_credits,
                                                   region=region,
                                                   department=department,
                                                   district=district,
                                                   for_orders=for_orders,
                                                   for_publications=for_publications,
                                                   URL=URL,
+                                                  name=name,
                                                   beginning_sowing_date=beginning_sowing_date,
                                                   ending_sowing_date=ending_sowing_date,
                                                   beginning_harvest_date=beginning_harvest_date,
@@ -700,7 +711,7 @@ class PostAd(generics.ListCreateAPIView):
 
             file_obj = request.FILES.get('file', '')
             img = Image.open(file_obj)
-            img.thumbnail((500,500),Image.ANTIALIAS)
+            img.thumbnail((500, 500), Image.ANTIALIAS)
             thumb_io = BytesIO()
             img.save(thumb_io, format='JPEG')
             image_file = InMemoryUploadedFile(thumb_io, None, str(file_obj.name) + '.jpg', 'image/jpeg', thumb_io.tell,
@@ -887,7 +898,7 @@ class GetAdForIt(generics.ListCreateAPIView):
 
 
 class PostUserFromWeb(generics.ListCreateAPIView):
-    #permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     # serializer_class = AdvertisementSerializer
     def post(self, request, **kwargs):
@@ -896,58 +907,120 @@ class PostUserFromWeb(generics.ListCreateAPIView):
             last_name = request.data.get('last_name')
             phone_number = request.data.get('phone_number')
             if get_user_model().objects.filter(phone_number=phone_number):
-                return HttpResponse(json.dumps({"message": "Teléfono ya registrado"}), status=400, content_type="application/json")
+                return HttpResponse(json.dumps({"message": "Teléfono ya registrado"}), status=400,
+                                    content_type="application/json")
             password = request.data.get('password')
             DNI = request.data.get('DNI')
             RUC = request.data.get('RUC')
             district_id = request.data.get('district_id')
+            email = request.data.get('email')
             district_obj = District.objects.filter(id=district_id).first()
             user = get_user_model().objects.create(first_name=first_name,
                                                    last_name=last_name,
                                                    phone_number=phone_number,
-                                                   password=password,
                                                    DNI=DNI,
+                                                   email=email,
                                                    role='an',
                                                    RUC=RUC,
                                                    district=district_obj)
 
             file_obj = request.FILES.get('file', '')
-            # if file_obj == '':
-            # Compressing Image and Preventing Rotation
-            img = Image.open(file_obj)
-            get_exif_info = img._getexif()
-            if get_exif_info:
-                exif = dict((ExifTags.TAGS[k], v) for k, v in get_exif_info.items() if k in ExifTags.TAGS)
-                if exif['Orientation'] == 3:
-                    img = img.rotate(180, expand=True)
-                elif exif['Orientation'] == 6:
-                    img = img.rotate(270, expand=True)
-                elif exif['Orientation'] == 8:
-                    img = img.rotate(90, expand=True)
+            if file_obj:
+                img = Image.open(file_obj)
+                get_exif_info = img._getexif()
+                if get_exif_info:
+                    exif = dict((ExifTags.TAGS[k], v) for k, v in get_exif_info.items() if k in ExifTags.TAGS)
+                    if exif['Orientation'] == 3:
+                        img = img.rotate(180, expand=True)
+                    elif exif['Orientation'] == 6:
+                        img = img.rotate(270, expand=True)
+                    elif exif['Orientation'] == 8:
+                        img = img.rotate(90, expand=True)
 
-            img.thumbnail((500, 500), Image.ANTIALIAS)
-            thumb_io = BytesIO()
-            img.save(thumb_io, format='JPEG')
-            image_file = InMemoryUploadedFile(thumb_io, None, str(file_obj.name) + '.jpg', 'image/jpeg', thumb_io.tell,
-                                              None)
+                img.thumbnail((500, 500), Image.ANTIALIAS)
+                thumb_io = BytesIO()
+                img.save(thumb_io, format='JPEG')
+                image_file = InMemoryUploadedFile(thumb_io, None, str(file_obj.name) + '.jpg', 'image/jpeg', thumb_io.tell,
+                                                  None)
 
-            # organize a path for the file in bucket
-            file_directory_within_bucket = 'profile_pictures/'
+                # organize a path for the file in bucket
+                file_directory_within_bucket = 'profile_pictures/'
 
-            # synthesize a full file path; note that we included the filename
-            file_path_within_bucket = os.path.join(
-                file_directory_within_bucket,
-                user.phone_number.as_e164[1:]
-            )
+                # synthesize a full file path; note that we included the filename
+                file_path_within_bucket = os.path.join(
+                    file_directory_within_bucket,
+                    user.phone_number.as_e164[1:]
+                )
 
-            media_storage = MediaStorage()
+                media_storage = MediaStorage()
 
-            media_storage.save(file_path_within_bucket, image_file)
-            file_url = media_storage.url(file_path_within_bucket)
-            no_params_url = urljoin(file_url, urlparse(file_url).path)
-            user.profile_picture_URL = no_params_url
+                media_storage.save(file_path_within_bucket, image_file)
+                file_url = media_storage.url(file_path_within_bucket)
+                no_params_url = urljoin(file_url, urlparse(file_url).path)
+                user.profile_picture_URL = no_params_url
+            user.set_password(password)
             user.save()
 
             return HttpResponse('Created correctly.', status=200)
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
+
+
+class DeleteAd(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, **kwargs):
+        try:
+            ad_id = self.kwargs['id']
+            credits_ret = Advertisement.objects.filter(id=ad_id).first().remaining_credits
+            Advertisement.objects.filter(id=ad_id).first().delete()
+
+            get_user_model().objects.filter(id=self.request.user.id).update(number_of_credits=
+                                                                            F('number_of_credits') + int(credits_ret))
+
+            return HttpResponse('Removed correctly.', status=200)
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
+
+
+class GetSupplies(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, **kwargs):
+        try:
+            ad_id = self.kwargs['id']
+            ad_obj = Advertisement.objects.filter(id=ad_id).first()
+            linkedToObjects = LinkedTo.objects.filter(advertisement=ad_obj)
+            supplyNames = []
+            for obj in linkedToObjects:
+                it = obj.supply.name
+                if it not in supplyNames:
+                    supplyNames.append(it)
+            if len(supplyNames) == len(Supply.objects.all()):
+                supplyNames = ["Todos los insumos"]
+            return HttpResponse(json.dumps({"supplies": supplyNames}), status=200)
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
+
+
+class AddCredits(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request, **kwargs):
+        try:
+            ad_id = self.kwargs['id']
+            user = self.request.user
+            new_credits = request.data.get('credits')
+            if int(new_credits) > user.number_of_credits:
+                return HttpResponse(json.dumps({"message": "No hay suficientes creditos en su cuenta"}), status=400,
+                                    content_type="application/json")
+
+            Advertisement.objects.filter(id=ad_id).update(remaining_credits=F('remaining_credits') + new_credits,
+                                                          original_credits=F('original_credits') + new_credits)
+
+            get_user_model().objects.filter(id=self.request.user.id).update(number_of_credits=
+                                                                            F('number_of_credits') - int(new_credits))
+
+            return HttpResponse('Updated correctly.', status=200)
         except Exception as e:
             return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
