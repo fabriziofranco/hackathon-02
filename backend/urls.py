@@ -62,8 +62,6 @@ urlpatterns = [
     path('mySuggestions/', views.GetMySuggestions.as_view()),
     path('purchaseCredits/', culqi.CreateChargeClient.as_view()),
     path('myCredits/', culqi.MyCredits.as_view()),
-    path('sellPublication/', views.SellPublicationView.as_view()),
-    path('solveOrder/', views.SolveOrderView.as_view()),
     path('postAd/', views.PostAd.as_view()),
     path('estimatePublic/', views.EstimatePublic.as_view()),
     path('getAdForIt/', views.GetAdForIt.as_view()),

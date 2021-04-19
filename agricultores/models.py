@@ -111,10 +111,6 @@ class User(AbstractBaseUser):
 
 class Supply(models.Model):
     name = models.CharField(max_length=50, null=False, blank=False)
-    sold_publications = models.IntegerField(default=0)
-    unsold_publications = models.IntegerField(default=0)
-    solved_orders = models.IntegerField(default=0)
-    unsolved_orders = models.IntegerField(default=0)
     days_for_harvest = models.IntegerField(default=0)
 
     def __str__(self):

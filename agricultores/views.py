@@ -168,36 +168,6 @@ class DistrictFilterView(generics.ListAPIView):
         return District.objects.filter(region=region_id)
 
 
-class SellPublicationView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def put(self, request):
-        try:
-            supply_name = request.data.get('name')
-
-            Supply.objects.filter(name=supply_name).update(sold_publications=F('sold_publications') + 1,
-                                                           unsold_publications=F('unsold_publications') - 1)
-
-            return HttpResponse('Updated correctly.', status=200)
-        except Exception as e:
-            return HttpResponse('Internal error.', status=400)
-
-
-class SolveOrderView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def put(self, request):
-        try:
-            supply_name = request.data.get('name')
-
-            Supply.objects.filter(name=supply_name).update(solved_orders=F('solved_orders') + 1,
-                                                           unsolved_orders=F('unsolved_orders') - 1)
-
-            return HttpResponse('Updated correctly.', status=200)
-        except Exception as e:
-            return HttpResponse('Internal error.', status=400)
-
-
 class ActionBasedPermission(AllowAny):
     """
     Grant or deny access to a view, based on a mapping in view.action_permissions

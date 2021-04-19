@@ -1,3 +1,5 @@
+from django.db.models import Count
+
 from admin_numeric_filter.forms import RangeNumericForm, SliderNumericForm
 from django import forms
 from django.contrib import admin
@@ -5,8 +7,8 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
-from admin_numeric_filter.admin import NumericFilterModelAdmin, SingleNumericFilter, RangeNumericFilter, \
-    SliderNumericFilter
+from admin_numeric_filter.admin import *
+from django.db.models import When, F, Q
 
 from agricultores.models import *
 
@@ -129,16 +131,44 @@ class UserAdmin(BaseUserAdmin):
 
 
 class SupplyAdmin(NumericFilterModelAdmin):
-    list_display = ('name', 'sold_publications', 'unsold_publications', 'solved_orders', 'unsolved_orders',)
-
-    list_filter = (('sold_publications', SliderNumericFilter),
-                   ('unsold_publications', SliderNumericFilter),
-                   ('solved_orders', SliderNumericFilter),
-                   ('unsolved_orders', SliderNumericFilter),
-                   )
+    list_display = (
+        'name', 'sold_count', 'unsold_count', 'solved_count', 'unsolved_count')
 
     search_fields = ('name',)
     ordering = ('name',)
+
+    def get_queryset(self, request):
+        return Supply.objects.annotate(sold_count=Count('publish', filter=Q(publish__is_sold=True)),
+                                       unsold_count=Count('publish', filter=Q(publish__is_sold=False)),
+                                       solved_count=Count('order', filter=Q(order__is_solved=True)),
+                                       unsolved_count=Count('order', filter=Q(order__is_solved=False)))
+
+    def sold_count(self, obj):
+        return obj.sold_count
+
+    sold_count.admin_order_field = 'sold_count'
+    sold_count.short_description = 'Sold publications'
+
+    def unsold_count(self, obj):
+        return obj.unsold_count
+
+    unsold_count.admin_order_field = 'unsold_count'
+    unsold_count.short_description = 'Unsold publications'
+
+    def solved_count(self, obj):
+        return obj.solved_count
+
+    solved_count.admin_order_field = 'solved_count'
+    solved_count.short_description = 'Solved orders'
+
+    def unsolved_count(self, obj):
+        return obj.unsolved_count
+
+    unsolved_count.admin_order_field = 'unsolved_count'
+    unsolved_count.short_description = 'Unsolved orders'
+
+    list_filter = SolvedOrdersFilter, UnsolvedOrdersFilter, SoldPublicationFilter, UnsoldPublicationFilter
+
     change_form = SupplyForm
     add_form = SupplyCreationForm
 
@@ -158,7 +188,7 @@ class PublishAdmin(NumericFilterModelAdmin):
     list_display = ('user', 'supplies', 'unit_price', 'weight_unit', 'harvest_date',
                     'is_sold', "test")
 
-    list_filter = (('unit_price', SliderNumericFilter), 'is_sold')
+    list_filter = (('unit_price', RangeNumericFilter), 'is_sold')
 
     def test(self, obj):
         return obj.user.district
@@ -175,7 +205,7 @@ class OrderAdmin(NumericFilterModelAdmin):
     list_display = ('user', 'supplies', 'unit_price', 'weight_unit', 'desired_harvest_date',
                     'is_solved', "test")
 
-    list_filter = (('unit_price', SliderNumericFilter), 'is_solved')
+    list_filter = (('unit_price', RangeNumericFilter), 'is_solved')
 
     def test(self, obj):
         return obj.user.district
@@ -191,7 +221,7 @@ class AdAdmin(NumericFilterModelAdmin):
     list_display = ('user', 'name', 'original_credits', 'remaining_credits', 'department', 'region',
                     'test', "for_publications", "for_orders")
 
-    list_filter = (('original_credits', SliderNumericFilter), ('remaining_credits', SliderNumericFilter), 'for_orders',
+    list_filter = (('original_credits', RangeNumericFilter), ('remaining_credits', RangeNumericFilter), 'for_orders',
                    'for_publications')
 
     def test(self, obj):
@@ -215,6 +245,7 @@ class LinkedToAdmin(admin.ModelAdmin):
         if obj is not None and obj.id > 1:
             return False
         return super().has_change_permission(request, obj=obj)
+
     ordering = ('advertisement', 'supply')
 
     search_fields = (

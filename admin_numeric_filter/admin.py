@@ -52,10 +52,10 @@ class SingleNumericFilter(admin.FieldListFilter):
 
     def choices(self, changelist):
         return ({
-            'request': self.request,
-            'parameter_name': self.parameter_name,
-            'form': SingleNumericForm(name=self.parameter_name, data={self.parameter_name: self.value()}),
-        }, )
+                    'request': self.request,
+                    'parameter_name': self.parameter_name,
+                    'form': SingleNumericForm(name=self.parameter_name, data={self.parameter_name: self.value()}),
+                },)
 
 
 class RangeNumericFilter(admin.FieldListFilter):
@@ -107,13 +107,13 @@ class RangeNumericFilter(admin.FieldListFilter):
 
     def choices(self, changelist):
         return ({
-            'request': self.request,
-            'parameter_name': self.parameter_name,
-            'form': RangeNumericForm(name=self.parameter_name, data={
-                self.parameter_name + '_from': self.used_parameters.get(self.parameter_name + '_from', None),
-                self.parameter_name + '_to': self.used_parameters.get(self.parameter_name + '_to', None),
-            }),
-        }, )
+                    'request': self.request,
+                    'parameter_name': self.parameter_name,
+                    'form': RangeNumericForm(name=self.parameter_name, data={
+                        self.parameter_name + '_from': self.used_parameters.get(self.parameter_name + '_from', None),
+                        self.parameter_name + '_to': self.used_parameters.get(self.parameter_name + '_to', None),
+                    }),
+                },)
 
 
 class SliderNumericFilter(RangeNumericFilter):
@@ -156,20 +156,95 @@ class SliderNumericFilter(RangeNumericFilter):
             step = self.STEP if self.STEP else 1
 
         return ({
-            'decimals': decimals,
-            'step': step,
-            'parameter_name': self.parameter_name,
-            'request': self.request,
-            'min': min_value,
-            'max': max_value,
-            'value_from': self.used_parameters.get(self.parameter_name + '_from', min_value),
-            'value_to': self.used_parameters.get(self.parameter_name + '_to', max_value),
-            'form': SliderNumericForm(name=self.parameter_name, data={
-                self.parameter_name + '_from': self.used_parameters.get(self.parameter_name + '_from', min_value),
-                self.parameter_name + '_to': self.used_parameters.get(self.parameter_name + '_to', max_value),
-            })
-        }, )
+                    'decimals': decimals,
+                    'step': step,
+                    'parameter_name': self.parameter_name,
+                    'request': self.request,
+                    'min': min_value,
+                    'max': max_value,
+                    'value_from': self.used_parameters.get(self.parameter_name + '_from', min_value),
+                    'value_to': self.used_parameters.get(self.parameter_name + '_to', max_value),
+                    'form': SliderNumericForm(name=self.parameter_name, data={
+                        self.parameter_name + '_from': self.used_parameters.get(self.parameter_name + '_from',
+                                                                                min_value),
+                        self.parameter_name + '_to': self.used_parameters.get(self.parameter_name + '_to', max_value),
+                    })
+                },)
 
     def _get_min_step(self, precision):
         result_format = '{{:.{}f}}'.format(precision - 1)
         return float(result_format.format(0) + '1')
+
+
+class AnnotatedFieldRangeNumericFilter(admin.SimpleListFilter):
+    request = None
+    template = 'admin/filter_numeric_range.html'
+
+    def __init__(self, request, params, model, model_admin):
+        super().__init__(request, params, model, model_admin)
+
+        self.request = request
+
+        if self.parameter_name + '_from' in params:
+            value = params.pop(self.parameter_name + '_from')
+            self.used_parameters[self.parameter_name + '_from'] = value
+
+        if self.parameter_name + '_to' in params:
+            value = params.pop(self.parameter_name + '_to')
+            self.used_parameters[self.parameter_name + '_to'] = value
+
+    def lookups(self, request, model_admin):
+        return [self.parameter_name]
+
+    def queryset(self, request, queryset):
+        filters = {}
+
+        value_from = self.used_parameters.get(self.parameter_name + '_from', None)
+        if value_from is not None and value_from != '':
+            filters.update({
+                self.parameter_name + '__gte': self.used_parameters.get(self.parameter_name + '_from', None),
+            })
+
+        value_to = self.used_parameters.get(self.parameter_name + '_to', None)
+        if value_to is not None and value_to != '':
+            filters.update({
+                self.parameter_name + '__lte': self.used_parameters.get(self.parameter_name + '_to', None),
+            })
+
+        return queryset.filter(**filters)
+
+    def expected_parameters(self):
+        return [
+            '{}_from'.format(self.parameter_name),
+            '{}_to'.format(self.parameter_name),
+        ]
+
+    def choices(self, changelist):
+        return ({
+                    'request': self.request,
+                    'parameter_name': self.parameter_name,
+                    'form': RangeNumericForm(name=self.parameter_name, data={
+                        self.parameter_name + '_from': self.used_parameters.get(self.parameter_name + '_from', None),
+                        self.parameter_name + '_to': self.used_parameters.get(self.parameter_name + '_to', None),
+                    }),
+                },)
+
+
+class SoldPublicationFilter(AnnotatedFieldRangeNumericFilter):
+    title = 'Sold Publications'
+    parameter_name = 'sold_count'
+
+
+class UnsoldPublicationFilter(AnnotatedFieldRangeNumericFilter):
+    title = 'Unsold Publications'
+    parameter_name = 'unsold_count'
+
+
+class SolvedOrdersFilter(AnnotatedFieldRangeNumericFilter):
+    title = 'Solved Orders'
+    parameter_name = 'solved_count'
+
+
+class UnsolvedOrdersFilter(AnnotatedFieldRangeNumericFilter):
+    title = 'Unsolved Orders'
+    parameter_name = 'unsolved_count'
