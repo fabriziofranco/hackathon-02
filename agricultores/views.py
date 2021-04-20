@@ -994,3 +994,33 @@ class AddCredits(generics.ListCreateAPIView):
             return HttpResponse('Updated correctly.', status=200)
         except Exception as e:
             return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
+
+
+class OrderSupply(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
+
+    def get(self, request, **kwargs):
+        try:
+            order_id = self.kwargs['id']
+            order_obj = Order.objects.filter(id=order_id).first()
+            supply_id = order_obj.supplies.id
+            supply_obj = Supply.objects.filter(id=supply_id).first()
+            return HttpResponse(json.dumps({"name": supply_obj.name, "days": supply_obj.days_for_harvest}), status=200)
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
+
+
+class PublicationSupply(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
+
+    def get(self, request, **kwargs):
+        try:
+            pub_id = self.kwargs['id']
+            pub_obj = Publish.objects.filter(id=pub_id).first()
+            supply_id = pub_obj.supplies.id
+            supply_obj = Supply.objects.filter(id=supply_id).first()
+            return HttpResponse(json.dumps({"name": supply_obj.name, "days": supply_obj.days_for_harvest}), status=200)
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")

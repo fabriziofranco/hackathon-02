@@ -72,5 +72,9 @@ urlpatterns = [
     re_path(r'getSupplies/(?P<id>\d+)/', views.GetSupplies.as_view()),
     path('addCredits/', views.AddCredits.as_view()),
     re_path(r'addCredits/(?P<id>\d+)/', views.AddCredits.as_view()),
+    path('orderSupply/', views.OrderSupply.as_view()),
+    re_path(r'orderSupply/(?P<id>\d+)/', views.OrderSupply.as_view()),
+    path('publicationSupply/', views.PublicationSupply.as_view()),
+    re_path(r'publicationSupply/(?P<id>\d+)/', views.PublicationSupply.as_view()),
     #  path('createOrder/', views.CreateMyOrder.as_view()),
 ]
