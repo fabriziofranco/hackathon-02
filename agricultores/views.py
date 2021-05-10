@@ -380,8 +380,9 @@ class ChangePassword(APIView):
         return verification_check
 
     def get(self, request):
+        phone_number = self.request.query_params.get("phone_number")
         try:
-            response = self.send_verification_token(request.data["phone_number"], 'sms')
+            response = self.send_verification_token(phone_number, 'sms')
             return Response(response.status)
         except twilio.base.exceptions.TwilioRestException as e:
             return HttpResponse(e, status=400)

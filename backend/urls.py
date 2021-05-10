@@ -75,5 +75,5 @@ urlpatterns = [
     path('addCredits/', views.AddCredits.as_view()),
     re_path(r'addCredits/(?P<id>\d+)/', views.AddCredits.as_view()),
     #  path('createOrder/', views.CreateMyOrder.as_view()),
-    path('changePassword/', views.ChangePassword.as_view()),
+    path('changePassword', views.ChangePassword.as_view()),
 ]
