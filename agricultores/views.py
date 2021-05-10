@@ -331,13 +331,39 @@ class PhoneVerification(APIView):
         except twilio.base.exceptions.TwilioRestException as e:
             return HttpResponse(e, status=400)
 
-    def put(self, request):
+
+class ChangePassword(APIView):
+    client = Client(environ.Env().str('TWILIO_ACCOUNT_SID'), environ.Env().str('TWILIO_AUTH_TOKEN'))
+
+    def send_verification_token(self, phone_number, channel):
+        verification = self.client.verify \
+            .services(environ.Env().str('TWILIO_SERVICE')) \
+            .verifications \
+            .create(to=phone_number, channel=channel)
+        return verification
+
+    def check_verification_token(self, phone_number, code):
+        verification_check = self.client.verify \
+            .services(environ.Env().str('TWILIO_SERVICE')) \
+            .verification_checks \
+            .create(to=phone_number, code=code)
+        return verification_check
+
+    def get(self, request):
+        try:
+            response = self.send_verification_token(request.data["phone_number"], 'sms')
+            return Response(response.status)
+        except twilio.base.exceptions.TwilioRestException as e:
+            return HttpResponse(e, status=400)
+
+    def post(self, request):
         code = request.data.get('code')
         try:
-            response = self.check_verification_token(request.user.phone_number.as_e164, code)
+            response = self.check_verification_token(request.data["phone_number"], code)
             if response.status == "approved":
-                request.user.set_password(request.data["new_password"])
-                request.user.save()
+                user = User.objects.get(phone_number=request.data["phone_number"])
+                user.set_password(request.data["new_password"])
+                user.save()
             return Response(response.status)
         except twilio.base.exceptions.TwilioRestException as e:
             return HttpResponse(e, status=400)
