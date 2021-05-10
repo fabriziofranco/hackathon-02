@@ -331,6 +331,17 @@ class PhoneVerification(APIView):
         except twilio.base.exceptions.TwilioRestException as e:
             return HttpResponse(e, status=400)
 
+    def put(self, request):
+        code = request.data.get('code')
+        try:
+            response = self.check_verification_token(request.user.phone_number.as_e164, code)
+            if response.status == "approved":
+                request.user.set_password(request.data["new_password"])
+                request.user.save()
+            return Response(response.status)
+        except twilio.base.exceptions.TwilioRestException as e:
+            return HttpResponse(e, status=400)
+
 
 class HelloView(APIView):
     permission_classes = [permissions.IsAuthenticated]
