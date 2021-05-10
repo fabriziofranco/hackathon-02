@@ -380,7 +380,7 @@ class ChangePassword(APIView):
         return verification_check
 
     def get(self, request):
-        phone_number = self.request.query_params.get("phone_number")
+        phone_number = "+" + self.request.query_params.get("phone_number")
         try:
             response = self.send_verification_token(phone_number, 'sms')
             return Response(response.status)
@@ -388,12 +388,14 @@ class ChangePassword(APIView):
             return HttpResponse(e, status=400)
 
     def post(self, request):
-        code = request.data.get('code')
+        code = request.data.get("code")
+        phone_number = "+" + self.request.query_params.get("phone_number")
+        new_password = request.data.get("password")
         try:
-            response = self.check_verification_token(request.data["phone_number"], code)
+            response = self.check_verification_token(phone_number, code)
             if response.status == "approved":
-                user = User.objects.get(phone_number=request.data["phone_number"])
-                user.set_password(request.data["new_password"])
+                user = User.objects.get(phone_number=phone_number)
+                user.set_password(new_password)
                 user.save()
             return Response(response.status)
         except twilio.base.exceptions.TwilioRestException as e:
