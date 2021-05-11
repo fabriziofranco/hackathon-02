@@ -349,8 +349,11 @@ class ChangePassword(APIView):
             .create(to=phone_number, code=code)
         return verification_check
 
+    def parse_phone_number(self, phone_number):
+        return "+" + phone_number
+
     def get(self, request):
-        phone_number = "+" + self.request.query_params.get("phone_number")
+        phone_number = self.parse_phone_number(self.request.query_params.get("phone_number"))
         try:
             response = self.send_verification_token(phone_number, 'sms')
             return Response(response.status)
@@ -359,8 +362,8 @@ class ChangePassword(APIView):
 
     def post(self, request):
         code = request.data.get("code")
-        phone_number = "+" + self.request.query_params.get("phone_number")
-        new_password = request.data.get("password")
+        phone_number = self.parse_phone_number(self.request.data.get("phone_number"))
+        new_password = request.data.get("new_password")
         try:
             response = self.check_verification_token(phone_number, code)
             if response.status == "approved":
