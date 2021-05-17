@@ -248,3 +248,11 @@ class SolvedOrdersFilter(AnnotatedFieldRangeNumericFilter):
 class UnsolvedOrdersFilter(AnnotatedFieldRangeNumericFilter):
     title = 'Órdenes no resueltas'
     parameter_name = 'unsolved_count'
+
+class AgricultoresFilter(AnnotatedFieldRangeNumericFilter):
+    title = 'Cantidad agricultores'
+    parameter_name = 'agricultores_count'
+
+class CompradoresFilter(AnnotatedFieldRangeNumericFilter):
+    title = 'Cantidad compradores'
+    parameter_name = 'compradores_count'

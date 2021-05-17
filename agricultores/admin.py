@@ -139,7 +139,8 @@ class UserAdmin(BaseUserAdmin):
 
 class SupplyAdmin(NumericFilterModelAdmin):
     list_display = (
-        'name', 'sold_count', 'unsold_count', 'solved_count', 'unsolved_count')
+        'name', 'sold_count', 'unsold_count', 'solved_count', 'unsolved_count', 'agricultores_count',
+        'compradores_count')
 
     search_fields = ('name',)
     ordering = ('name',)
@@ -149,13 +150,27 @@ class SupplyAdmin(NumericFilterModelAdmin):
         unsold_pubs = Count('publish', filter=Q(publish__is_sold=False), distinct=True)
         solved_orders = Count('order', filter=Q(order__is_solved=True), distinct=True)
         unsolved_orders = Count('order', filter=Q(order__is_solved=False), distinct=True)
-
+        agricultores_count = Count('publish__user', distinct=True)
+        compradores_count = Count('order__user', distinct=True)
         sup = Supply.objects.annotate(sold_count=sold_pubs). \
             annotate(unsold_count=unsold_pubs). \
             annotate(solved_count=solved_orders). \
-            annotate(unsolved_count=unsolved_orders)
-        print(sup)
+            annotate(unsolved_count=unsolved_orders). \
+            annotate(agricultores_count=agricultores_count). \
+            annotate(compradores_count=compradores_count)
         return sup
+
+    def agricultores_count(self, obj):
+        return obj.agricultores_count
+
+    agricultores_count.admin_order_field = 'agricultores_count'
+    agricultores_count.short_description = 'Cantidad de agricultores'
+
+    def compradores_count(self, obj):
+        return obj.compradores_count
+
+    compradores_count.admin_order_field = 'compradores_count'
+    compradores_count.short_description = 'Cantidad de compradores'
 
     def sold_count(self, obj):
         return obj.sold_count
@@ -181,8 +196,8 @@ class SupplyAdmin(NumericFilterModelAdmin):
     unsolved_count.admin_order_field = 'unsolved_count'
     unsolved_count.short_description = 'Órdenes no resueltas'
 
-    list_filter = SolvedOrdersFilter, UnsolvedOrdersFilter, SoldPublicationFilter, UnsoldPublicationFilter
-
+    list_filter = SolvedOrdersFilter, UnsolvedOrdersFilter, SoldPublicationFilter, UnsoldPublicationFilter,\
+                  CompradoresFilter, AgricultoresFilter
     change_form = SupplyForm
     add_form = SupplyCreationForm
 
