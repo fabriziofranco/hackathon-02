@@ -38,15 +38,19 @@ class PublishFilterView(generics.ListAPIView):
         supply_id = self.request.query_params.get('supply', 0)
         min_price = self.request.query_params.get('min_price', float('-inf'))
         max_price = self.request.query_params.get('max_price', float('inf'))
-        min_date = self.request.query_params.get('min_date', dt.date.min)
-        max_date = self.request.query_params.get('max_date', dt.date.max)
+        min_harvest_date = self.request.query_params.get('min_harvest_date', dt.date.min)
+        max_harvest_date = self.request.query_params.get('max_harvest_date', dt.date.max)
+        min_sowing_date = self.request.query_params.get('min_sowing_date', dt.date.min)
+        max_sowing_date = self.request.query_params.get('max_sowing_date', dt.date.max)
         department_id = self.request.query_params.get('department', 0)
         region_id = self.request.query_params.get('region', 0)
 
         temp = Publish.objects.filter(unit_price__gte=min_price,
                                       unit_price__lte=max_price,
-                                      harvest_date__gte=min_date,
-                                      harvest_date__lte=max_date,
+                                      harvest_date__gte=min_harvest_date,
+                                      harvest_date__lte=max_harvest_date,
+                                      sowing_date__gte=min_sowing_date,
+                                      sowing_date__lte=max_sowing_date,
                                       is_sold=False)
         if supply_id != 0:
             temp = temp.filter(supplies=supply_id)
@@ -65,15 +69,19 @@ class OrderFilterView(generics.ListAPIView):
         supply_id = self.request.query_params.get('supply', 0)
         min_price = self.request.query_params.get('min_price', float('-inf'))
         max_price = self.request.query_params.get('max_price', float('inf'))
-        min_date = self.request.query_params.get('min_date', dt.date.min)
-        max_date = self.request.query_params.get('max_date', dt.date.max)
+        min_harvest_date = self.request.query_params.get('min_harvest_date', dt.date.min)
+        max_harvest_date = self.request.query_params.get('max_harvest_date', dt.date.max)
+        min_sowing_date = self.request.query_params.get('min_sowing_date', dt.date.min)
+        max_sowing_date = self.request.query_params.get('max_sowing_date', dt.date.max)
         department_id = self.request.query_params.get('department', 0)
         region_id = self.request.query_params.get('region', 0)
 
         temp = Order.objects.filter(unit_price__gte=min_price,
                                     unit_price__lte=max_price,
-                                    desired_harvest_date__gte=min_date,
-                                    desired_harvest_date__lte=max_date,
+                                    desired_harvest_date__gte=min_harvest_date,
+                                    desired_harvest_date__lte=max_harvest_date,
+                                    desired_sowing_date__gte=min_sowing_date,
+                                    desired_sowing_date__lte=max_sowing_date,
                                     is_solved=False)
         if supply_id != 0:
             temp = temp.filter(supplies=supply_id)
