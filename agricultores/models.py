@@ -1,3 +1,5 @@
+import datetime
+from django.utils.timezone import now
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import (
@@ -56,6 +58,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    registration_day = models.DateTimeField(default=now)
     ROL = [('ag', 'Agricultor'), ('an', 'Anunciante'), ('co', 'Comprador')]
     phone_number = PhoneNumberField(null=False, blank=False, unique=True)
     email = models.EmailField(
@@ -79,7 +82,6 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
-
     objects = UserManager()
 
     USERNAME_FIELD = 'phone_number'

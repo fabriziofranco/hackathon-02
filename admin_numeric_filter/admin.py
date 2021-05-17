@@ -231,20 +231,20 @@ class AnnotatedFieldRangeNumericFilter(admin.SimpleListFilter):
 
 
 class SoldPublicationFilter(AnnotatedFieldRangeNumericFilter):
-    title = 'Sold Publications'
+    title = 'Cultivos vendidos'
     parameter_name = 'sold_count'
 
 
 class UnsoldPublicationFilter(AnnotatedFieldRangeNumericFilter):
-    title = 'Unsold Publications'
+    title = 'Cultivos no vendidos'
     parameter_name = 'unsold_count'
 
 
 class SolvedOrdersFilter(AnnotatedFieldRangeNumericFilter):
-    title = 'Solved Orders'
+    title = 'Órdenes resueltas'
     parameter_name = 'solved_count'
 
 
 class UnsolvedOrdersFilter(AnnotatedFieldRangeNumericFilter):
-    title = 'Unsolved Orders'
+    title = 'Órdenes no resueltas'
     parameter_name = 'unsolved_count'

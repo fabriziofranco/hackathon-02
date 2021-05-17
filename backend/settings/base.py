@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'agricultores.apps.AgricultoresConfig',
     'phonenumber_field',
     'rest_framework',
+    'more_admin_filters',
     'storages',
     'corsheaders',
 ]

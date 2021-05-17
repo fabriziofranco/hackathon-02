@@ -1,5 +1,4 @@
 from django.db.models import Count
-
 from admin_numeric_filter.forms import RangeNumericForm, SliderNumericForm
 from django import forms
 from django.contrib import admin
@@ -11,6 +10,7 @@ from admin_numeric_filter.admin import *
 from django.db.models import When, F, Q
 
 from agricultores.models import *
+from more_admin_filters.filters import DepartmentDropdown, RegionDropdown
 
 
 class UserCreationForm(forms.ModelForm):
@@ -70,7 +70,7 @@ class UserChangeForm(forms.ModelForm):
                   'role',
                   'password',
                   'is_active',
-                  'is_admin'
+                  'is_admin',
                   )
 
     def clean_password(self):
@@ -93,11 +93,17 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
+    def department_name(self, obj):
+        return obj.district.department.name
+
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('phone_number', 'first_name', 'last_name', 'email', 'role', 'district', 'is_admin')
-    list_filter = ('is_admin', 'role')
+    list_display = (
+        'phone_number', 'first_name', 'last_name', 'email', 'role', 'district', 'is_admin', 'registration_day')
+    list_filter = ['is_admin', 'role', 'registration_day',
+                   ('district__department__name', DepartmentDropdown),
+                   ('district__region__name', RegionDropdown)]
     fieldsets = (
         (None, {'fields': ('phone_number', 'password')}),
         ('Personal info', {'fields': ('email',
@@ -125,7 +131,8 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('phone_number', 'email', 'password1', 'password2'),
         }),
     )
-    search_fields = ('phone_number', 'email', 'first_name', 'last_name')
+    search_fields = ('phone_number', 'email', 'first_name', 'last_name', 'district__name', 'registration_day',
+                     'district__department__name', 'district__region__name')
     ordering = ('phone_number',)
     filter_horizontal = ()
 
@@ -154,25 +161,25 @@ class SupplyAdmin(NumericFilterModelAdmin):
         return obj.sold_count
 
     sold_count.admin_order_field = 'sold_count'
-    sold_count.short_description = 'Sold publications'
+    sold_count.short_description = 'Cultivos vendidos'
 
     def unsold_count(self, obj):
         return obj.unsold_count
 
     unsold_count.admin_order_field = 'unsold_count'
-    unsold_count.short_description = 'Unsold publications'
+    unsold_count.short_description = 'Cultivos no vendidos'
 
     def solved_count(self, obj):
         return obj.solved_count
 
     solved_count.admin_order_field = 'solved_count'
-    solved_count.short_description = 'Solved orders'
+    solved_count.short_description = 'Órdenes resueltas'
 
     def unsolved_count(self, obj):
         return obj.unsolved_count
 
     unsolved_count.admin_order_field = 'unsolved_count'
-    unsolved_count.short_description = 'Unsolved orders'
+    unsolved_count.short_description = 'Órdenes no resueltas'
 
     list_filter = SolvedOrdersFilter, UnsolvedOrdersFilter, SoldPublicationFilter, UnsoldPublicationFilter
 
