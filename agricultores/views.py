@@ -903,6 +903,8 @@ class GetAdForIt(generics.ListCreateAPIView):
                 'data': True,
                 'URL': it.URL,
                 'picture_URL': it.picture_URL,
+                'id_advertiser': it.user.id,
+                'phone_number': str(it.user.phone_number),
             })
         else:
             return JsonResponse({
