@@ -77,4 +77,5 @@ urlpatterns = [
     path('publicationSupply/', views.PublicationSupply.as_view()),
     re_path(r'publicationSupply/(?P<id>\d+)/', views.PublicationSupply.as_view()),
     #  path('createOrder/', views.CreateMyOrder.as_view()),
+    path('changePassword', views.ChangePassword.as_view()),
 ]

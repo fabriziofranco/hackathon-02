@@ -114,16 +114,24 @@ class AdressedToSerializer(serializers.ModelSerializer):
 class PublishSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     supplies = RelatedFieldAlternative(queryset=Supply.objects.all(), serializer=SuppliesSerializer)
+    user_phone_number = serializers.SerializerMethodField()
 
     class Meta:
         model = Publish
         fields = '__all__'
 
+    def get_user_phone_number(self, obj):
+        return obj.user.phone_number.as_e164
+
 
 class OrderSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     supplies = RelatedFieldAlternative(queryset=Supply.objects.all(), serializer=SuppliesSerializer)
+    user_phone_number = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = '__all__'
+
+    def get_user_phone_number(self, obj):
+        return obj.user.phone_number.as_e164
