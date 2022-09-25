@@ -13,7 +13,7 @@ environ.Env.read_env(env_file=base('.env')) # reading .env file
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-SECRET_KEY = 'hackathon-02'
+SECRET_KEY = environ.Env().str('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False)
@@ -80,20 +80,15 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'hackaton-02',
-        'USER': 'postgres',
-        'PASSWORD': 'mrg12345',
-        'HOST': 'hackaton-02.cwygv7gkn7wf.us-east-1.rds.amazonaws.com',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': environ.Env().str('DATABASE_NAME'),
+        'USER': environ.Env().str('DATABASE_USER'),
+        'PASSWORD': environ.Env().str('DATABASE_PASSWORD'),
+        'HOST': environ.Env().str('DATABASE_HOST'),
         'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -157,4 +152,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 """
+
 CORS_ALLOW_ALL_ORIGINS = True

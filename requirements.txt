@@ -13,10 +13,10 @@ djangorestframework_simplejwt==4.6.0
 django-environ==0.4.5
 gunicorn==20.0.4
 whitenoise~=5.2.0
-psycopg2
 django-storages==1.11.1
 boto3==1.16.58
 Pillow==2.2.2
 purl==1.5
 django-cors-headers==3.7.0
 django-admin-numeric-filter==0.1.6
+psutil

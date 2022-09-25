@@ -60,4 +60,6 @@ urlpatterns = [
     re_path(r'publicationSupply/(?P<id>\d+)/', views.PublicationSupply.as_view()),
     #  path('createOrder/', views.CreateMyOrder.as_view()),
     # path('changePassword', views.ChangePassword.as_view()),
+    path('heartbeat/server/', views.Heartbeat.as_view()),
+    path('heartbeat/database/', views.HeartbeatDB.as_view()),
 ]

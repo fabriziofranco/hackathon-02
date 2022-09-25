@@ -28,6 +28,7 @@ from datetime import date
 import secrets
 from django.db.models import Q
 import random
+from django.db import connection
 
 
 class PublishFilterView(generics.ListAPIView):
@@ -1075,5 +1076,31 @@ class PublicationSupply(generics.ListCreateAPIView):
             supply_id = pub_obj.supplies.id
             supply_obj = Supply.objects.filter(id=supply_id).first()
             return HttpResponse(json.dumps({"name": supply_obj.name, "days": supply_obj.days_for_harvest}), status=200)
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
+
+class Heartbeat(generics.GenericAPIView):
+    def get(self,request, **kwargs):
+        try:
+            return HttpResponse('Server is alive!', status=200)
+        except Exception as e:
+            return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
+
+class HeartbeatDB(generics.GenericAPIView):
+    def db_check(self):
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT 1")
+                cursor.fetchone()
+                return True
+        except Exception:
+            return False
+
+    def get(self,request, **kwargs):
+        try:
+            if self.db_check():
+                return HttpResponse('Database is alive!', status=200)
+            else:
+                return HttpResponse('Database is down!', status=400)
         except Exception as e:
             return HttpResponse(json.dumps({"message": e}), status=400, content_type="application/json")
